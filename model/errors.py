@@ -1,0 +1,2 @@
+
+class NoExitError(RuntimeError): pass
