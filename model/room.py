@@ -79,8 +79,8 @@ class Exits(object):
         if exit_.direction() is not None:
             self.__byDirectionHash[exit_.direction()] = exit_.id()
 
-        if exit_.direction() is not None:
-            self.__byDirectionHash[exit_.direction()] = exit_.id()
+        if exit_.label() is not None:
+            self.__byLabelHash[exit_.label()] = exit_.id()
 
     def hasExit(self, exitId):
         return self.__exits.has_key(exitId)
@@ -134,7 +134,7 @@ class Exit(object):
         return self.__direction
 
     def label(self):
-        returb
+        return self.__label
 
 
 class Geometry(object):
