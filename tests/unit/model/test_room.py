@@ -6,6 +6,16 @@ from model.errors import *
 
 from PyQt4 import QtCore, QtGui
 
+class TestClassRoom:
+
+    def test_addExit(self):
+
+        room = Room()
+        exit_ = Exit()
+        room.addExit(exit_)
+
+        assert room.exits().getExit(exit_.id()).room().id() is room.id()
+
 class TestClassGeometry:
 
     def test_initMethod(self):
@@ -57,7 +67,7 @@ class TestClassGeometry:
 def exits():
     return Exits()
 
-class TestExits:
+class TestClassExits:
     def test_hasExitInDirectionMethod(self, exits):
         exits.addExit(Exit(direction=Directions.N))
 
@@ -85,3 +95,31 @@ class TestExits:
 
         with pytest.raises(NoExitError):
             exits.getExitByLabel('drzwi')
+
+class TestClassExit:
+    def test_kwargsInit(self):
+
+        #constants for tests
+        eLABEL = 'label'
+        eDIRECTION = Directions.N
+        eMASKS = ['mask1', 'mask2']
+        eONEWAY = True
+        eBLOCKED = True
+        eROOM = Room()
+
+        exit_ = Exit(direction=eDIRECTION, label=eLABEL, masks=eMASKS, oneWay=eONEWAY, blocked=eBLOCKED, room=eROOM)
+
+        assert exit_.direction() is eDIRECTION
+        assert exit_.label() is eLABEL
+        assert exit_.masks() is eMASKS
+        assert exit_.oneWay() is eONEWAY
+        assert exit_.blocked() is eBLOCKED
+        assert exit_.room() is eROOM
+
+        with pytest.raises(ValueError):
+            exit_ = Exit(masks=False)
+
+        with pytest.raises(ValueError):
+            exit_ = Exit(room=False)
+
+

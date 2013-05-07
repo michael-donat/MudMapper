@@ -4,22 +4,43 @@ from PyQt4 import QtCore
 from model.tools import enum
 from uuid import uuid1
 from model.errors import *
+import types
 
 Directions = enum('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'U', 'D')
 
 class Room(object):
+    __id=None
     __properties=None
     __geometry=None
+    __exits=None
 
     def __init__(self):
+        self.__id=uuid1()
         self.__properties = Properties()
         self.__geometry = Geometry()
+        self.__exits = Exits()
+
+    def id(self):
+        return self.__id
 
     def properties(self):
         return self.__properties
 
     def geometry(self):
         return self.__geometry
+
+    def addExit(self, exit_):
+        """
+        :param exit_: Exit
+        """
+        exit_.setRoom(self)
+        self.exits().addExit(exit_)
+
+    def exits(self):
+        """
+        :rtype: Exits
+        """
+        return self.__exits
 
 
 class Properties(object):
@@ -118,23 +139,50 @@ class Exit(object):
     __masks=None
     __destination=None
     __blocked=False
+    __oneWay=False
+    __room=None
 
     def __init__(self, **kwargs):
-        self.__masks={}
+        self.__masks=[]
         self.__id=uuid1()
         if kwargs.has_key('direction'):
             self.__direction = kwargs['direction']
         if kwargs.has_key('label'):
             self.__label = kwargs['label']
+        if kwargs.has_key('oneWay'):
+            self.__oneWay = bool(kwargs['oneWay'])
+        if kwargs.has_key('blocked'):
+            self.__blocked = bool(kwargs['blocked'])
+        if kwargs.has_key('masks'):
+            if not isinstance(kwargs['masks'], types.ListType): raise ValueError('Mask needs to be of type list, %s given' % type(kwargs['masks']))
+            self.__masks = kwargs['masks']
+        if kwargs.has_key('room'):
+            self.setRoom(kwargs['room'])
 
     def id(self):
         return self.__id
+
+    def setRoom(self, room):
+        if not isinstance(room, Room): raise ValueError('Mask needs to be of type model.Room, %s given' % type(room))
+        self.__room = room
+
+    def room(self):
+        return self.__room
 
     def direction(self):
         return self.__direction
 
     def label(self):
         return self.__label
+
+    def oneWay(self):
+        return self.__oneWay
+
+    def blocked(self):
+        return self.__blocked
+
+    def masks(self):
+        return self.__masks
 
 
 class Geometry(object):
@@ -176,3 +224,6 @@ class Geometry(object):
 
     def getRect(self):
         return QtCore.QRectF(QtCore.QPointF(self.__x1, self.__y1), QtCore.QPointF(self.__x2, self.__y2))
+
+
+
