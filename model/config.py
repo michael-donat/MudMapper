@@ -11,7 +11,7 @@ class RuntimeConfig(ConfigParser.SafeConfigParser):
 
     def __init__(self, argv):
         ConfigParser.SafeConfigParser.__init__(self)
-        self.__baseDir = os.path.abspath(os.path.realpath(__file__)+'/../..')
+        self.__baseDir = '.'
         self.__assetsConfig = AssetsConfig(self.__baseDir)
         self.__readDefaults()
 
@@ -30,6 +30,8 @@ class AssetsConfig(object):
 
     UI_MAIN_WINDOW = '/gui/map.ui'
 
+    ICON_SYSTEM_TRAY = '/assets/icons/hychsohn-transparent-bw_128x128x32.png'
+
     def __init__(self, baseDir):
         self.__baseDir = baseDir
 
@@ -38,3 +40,6 @@ class AssetsConfig(object):
 
     def getMainWindowUI(self):
         return self.__baseDir+self.UI_MAIN_WINDOW
+
+    def getTrayIcon(self):
+        return self.__baseDir+self.ICON_SYSTEM_TRAY

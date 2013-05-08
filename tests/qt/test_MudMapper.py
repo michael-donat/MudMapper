@@ -1,15 +1,28 @@
 import sys
 import unittest
+import pytest
 from PyQt4.QtGui import QApplication
 from PyQt4.QtTest import QTest
 from PyQt4.QtCore import Qt
 
-import application
+from application import Application as MudMapper
+
+@pytest.fixture
+def AppFixture():
+    MM = MudMapper()
+    MM.bootstrap()
+    MM.initialize()
+    MM.show()
+
+    return MM
 
 class TestApplication:
 
-    QApplication=None
+    def test_startUp(self, AppFixture):
+        MM = AppFixture
 
-    def test_bootstrap(self):
-        application = application.Application.bootstrap()
-        application.QApplication = QApplication()
+        assert MM.mainWindow().getMapViewport().scene() is None
+
+
+
+

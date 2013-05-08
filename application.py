@@ -1,6 +1,13 @@
+import sys
+
 from model.helper import container as DIContainer
-from model.helper import ComponentRequest as DIRequest
 from model.config import RuntimeConfig
+
+#need to register RuntimeConfig dependency first to avoid race conditions
+DIContainer.register('Config', RuntimeConfig(sys.argv))
+
+from model.helper import ComponentRequest as DIRequest
+
 from controller import mainWindow as mainWindowController, mapViewport as mapViewportController
 from PyQt4 import QtGui
 import model.map
@@ -10,15 +17,13 @@ import sys
 
 class Application:
 
-    __argv=None
     __QApplication=None
     __uiMainWindow=None
     __config=DIRequest('Config')
     __mapRegistry=None
     __controllers=None #used to keep controller reference alive
 
-    def __init__(self, argv):
-        self.__argv = argv
+    def __init__(self):
         self.__controllers=[]
 
     def __wireDependencies(self):
@@ -27,7 +32,7 @@ class Application:
 
     def bootstrap(self):
         self.__wireDependencies()
-        self.__QApplication = QtGui.QApplication(self.__argv)
+        self.__QApplication = QtGui.QApplication([])
 
     def QApplication(self):
         return self.__QApplication
@@ -36,8 +41,6 @@ class Application:
 
         application = self.QApplication()
         QSplashScreen = view.SplashScreen.getSplashScreen()
-        QSplashScreen.show()
-        QSplashScreen.raise_()
         application.processEvents()
 
         QSplashScreen.showMessage("Initializing application")
@@ -53,6 +56,8 @@ class Application:
         self.__uiMainWindow.resize(self.__config.getint('view', 'width'), self.__config.getint('view', 'height'))
         self.__uiMainWindow.setWindowTitle(self.__config.get('meta', 'windowTitle'))
 
+        view.SystemTray.getSystemTrayMenu(uiMainWindow)
+
         return uiMainWindow
 
     def __wire(self):
@@ -62,13 +67,11 @@ class Application:
     def mainWindow(self):
         return self.__uiMainWindow
 
-    def load(self):
-        map = self.__mapRegistry.createMap()
-
-
-    def run(self):
+    def show(self):
         self.mainWindow().show()
         self.mainWindow().raise_()
+
+    def run(self):
         sys.exit(self.QApplication().exec_())
 
 
