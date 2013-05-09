@@ -1,5 +1,5 @@
 test:
-	./test-unit.py tests/
+	PYTHONPATH=`pwd` py.test --junitxml=make/log/tests.xml
 
 all: osx package upload
 
