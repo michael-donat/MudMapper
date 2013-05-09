@@ -1,2 +1,2 @@
-|MudMapper |[![Build Status](https://travis-ci.org/thornag/MudMapper.png)](https://travis-ci.org/thornag/MudMapper)|
-=========
+<h1>MudMapper  <img align='right' src='https://travis-ci.org/thornag/MudMapper.png'></img></h1>
+
