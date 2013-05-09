@@ -1,6 +1,11 @@
 language: python
 python:
-  - "2.7"
-
+  - 2.7
+virtualenv:
+  # This allows installing PyQt using apt-get and being able to import it.
+  system_site_packages: true
+before_install:
+  # On Python 2.7 we install PyQt4 and run the UI tests.
+  - source .travis_before_install
 # command to run tests
 script: make test
