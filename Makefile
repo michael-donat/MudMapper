@@ -1,5 +1,5 @@
 test:
-	./test-unit.py tests/unit/
+	./test-unit.py tests/
 
 all: osx package upload
 
