@@ -14,7 +14,6 @@ from application import Application as MudMapper
 def AppFixture():
     MM = MudMapper()
     MM.bootstrap()
-    MM.initialize()
     MM.show()
 
     return MM

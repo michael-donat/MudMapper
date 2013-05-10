@@ -40,6 +40,7 @@ class Map(object):
         self.__levels[mapLevel.id()] = mapLevel
 
 
+
 class Zone(object):
     __id=None
     __name=None

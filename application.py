@@ -21,63 +21,80 @@ class Application:
     __uiMainWindow=None
     __config=DIRequest('Config')
     __mapRegistry=None
-    __controllers=None #used to keep controller reference alive
+    __uiToolbar=None
+    __controllers=None
 
     def __init__(self):
         self.__controllers=[]
 
     def bootstrap(self):
-        self.__QApplication = QtGui.QApplication([])
 
-    def QApplication(self):
-        return self.__QApplication
+        #will initialize all controllers here
 
-    def initialize(self):
+        fileMenuController = mainWindowController.FileMenu()
+        toolbarController = mainWindowController.Toolbar()
 
-        application = self.QApplication()
+        mapViewportControllerInstance = mapViewportController.Map()
+        mapControllerInstance = mapController.Map()
+
+        self.__controllers.append(fileMenuController)
+        self.__controllers.append(mapViewportControllerInstance)
+        self.__controllers.append(mapControllerInstance)
+        self.__controllers.append(toolbarController)
+
+        #will setup UI bits
+        self.__QApplication = application = QtGui.QApplication([])
         QSplashScreen = view.SplashScreen.getSplashScreen()
         application.processEvents()
 
         QSplashScreen.showMessage("Initializing application")
-        uiMainWindow = self.__buildUI()
-        QSplashScreen.showMessage("Wiring")
-        self.__wire()
-        QSplashScreen.finish(uiMainWindow)
-
-    def __buildUI(self):
-
-        #let's get main window
         self.__uiMainWindow = uiMainWindow = view.MainWindow()
         self.__uiMainWindow.resize(self.__config.getint('view', 'width'), self.__config.getint('view', 'height'))
         self.__uiMainWindow.setWindowTitle(self.__config.get('meta', 'windowTitle'))
 
         view.SystemTray.getSystemTrayMenu(uiMainWindow)
 
-        return uiMainWindow
+        self.__uiToolbar = uiToolbar = view.Toolbar.getToolbar(uiMainWindow)
+        QSplashScreen.showMessage("Wiring")
+        QSplashScreen.finish(uiMainWindow)
 
-    def __wire(self):
-        mainWindowController.Bootstrap(self.mainWindow())
-        mapViewportController.Bootstrap(self.mainWindow())
-        mapController.Bootstrap()
+        #wire it all together
 
-        self.__wireSignals()
+        mapViewportControllerInstance.setView(uiMainWindow.getMapViewport())
 
-    def __wireSignals(self):
+        mapControllerInstance.mapModelCreated.connect(mapViewportControllerInstance.createMap)
+        mapControllerInstance.mapModelDestroyed.connect(mapViewportControllerInstance.destroyMap)
 
-        mapControllerInstance = DIRequest('controllerMap').instance
-        mapViewportControllerInstance = DIRequest('controllerMapViewport').instance
 
-        mapControllerInstance.newMapModelCreated.connect(mapViewportControllerInstance.createMap)
+        mapViewportControllerInstance.roomCreateRequest.connect(mapControllerInstance.createRoomAt)
+
+        fileMenuController.wireMenu(uiMainWindow)
+        toolbarController.wireToolbarActions(uiMainWindow, uiToolbar)
+
+        DIContainer.register('controllerMap', mapControllerInstance)
+        DIContainer.register('controllerMapViewport', mapViewportControllerInstance)
+
+    def QApplication(self):
+        return self.__QApplication
+
 
     def mainWindow(self):
         return self.__uiMainWindow
 
+    def toolbar(self):
+        return self.__uiToolbar
+
     def show(self):
         self.mainWindow().show()
         self.mainWindow().raise_()
+        self.toolbar().show()
+        self.toolbar().raise_()
 
     def run(self):
         sys.exit(self.QApplication().exec_())
+
+    def loadMap(self):
+        mapControllerInstance = DIRequest('controllerMap').instance.createMap()
 
     def exit(self, code=0):
         self.QApplication().exit(code)

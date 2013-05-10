@@ -14,7 +14,7 @@ from application import Application as MudMapper
 def AppFixture():
     MM = MudMapper()
     MM.bootstrap()
-    MM.initialize()
+    MM.loadMap()
     MM.show()
 
     return MM
@@ -24,7 +24,11 @@ class TestApplication:
     def test_startUp(self, AppFixture):
         MM = AppFixture
 
-        assert MM.mainWindow().getMapViewport().scene() is None
+        mapControllerInstance = ComponentRequest('controllerMap').instance
+
+        assert mapControllerInstance.mapModel() is not None, 'Map should be auto created on startup'
+
+
 
 
 

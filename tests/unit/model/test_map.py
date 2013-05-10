@@ -52,3 +52,5 @@ class TestClassFactory:
         assert len(map.levels()) == 1, 'There is one level by default'
         assert next(map.levels().itervalues()).zone() is next(map.zones().itervalues()), 'Default level belongs to default zone'
 
+
+

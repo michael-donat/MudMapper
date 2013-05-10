@@ -13,6 +13,7 @@ class Room(object):
     __properties=None
     __geometry=None
     __exits=None
+    __level=None
 
     def __init__(self):
         self.__id=uuid1()
@@ -41,6 +42,9 @@ class Room(object):
         :rtype: Exits
         """
         return self.__exits
+
+    def setLevel(self, level):
+        self.__level=level
 
 
 class Properties(object):

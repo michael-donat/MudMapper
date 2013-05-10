@@ -23,13 +23,25 @@ class TestControllerMap:
 
         controller = mapController()
 
-        controller.newMapModelCreated.connect(signalSniffer.slotSlot)
+        controller.mapModelCreated.connect(signalSniffer.slotSlot)
 
         controller.createMap()
 
         signalSniffer.assertSignalArrived()
         signalSniffer.assertArgumentTypes(mapModel.Map)
 
+    def test_createNewMapIsDestroyingCurrentMap(self, signalSniffer):
+
+        controller = mapController()
+
+        controller.createMap()
+
+        controller.mapModelDestroyed.connect(signalSniffer.slotSlot)
+
+        controller.createMap()
+
+        signalSniffer.assertSignalArrived()
+        signalSniffer.assertArgumentTypes(mapModel.Map)
 
 
 

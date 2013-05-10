@@ -1,1 +1,83 @@
-<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="" skips="0" tests="13" time="1.170"><testcase classname="tests.qt.test_MudMapper.TestApplication" name="test_startUp" time="0.00032114982605"/><testcase classname="tests.unit.model.test_helper.TestClassGeometry" name="test_snapToGrid" time="0.000260829925537"/><testcase classname="tests.unit.model.test_room.TestClassRoom" name="test_addExit" time="0.00522899627686"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_initMethod" time="0.000181913375854"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_updateMethod" time="0.000241041183472"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_updateFromPointMethod" time="0.000328063964844"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_updateFromRectMethod" time="0.000248908996582"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_updateFromViewMethod" time="0.000386953353882"/><testcase classname="tests.unit.model.test_room.TestClassExits" name="test_hasExitInDirectionMethod" time="0.000197887420654"/><testcase classname="tests.unit.model.test_room.TestClassExits" name="test_getExitByDirectionMethod" time="0.0002601146698"/><testcase classname="tests.unit.model.test_room.TestClassExits" name="test_getExitByLabelMethod" time="0.000236034393311"/><testcase classname="tests.unit.model.test_room.TestClassExit" name="test_kwargsInit" time="0.000368118286133"/><testcase classname="tests.unit.model.test_tools.TestTools" name="test_enum" time="0.000197887420654"/></testsuite>
+<?xml version="1.0" encoding="utf-8"?><testsuite errors="1" failures="2" name="" skips="0" tests="21" time="1.295"><testcase classname="tests.qt.test_MudMapper.TestApplication" name="test_startUp" time="0.715232133865"><error message="test setup failure">@pytest.fixture
+    def AppFixture():
+        MM = MudMapper()
+        MM.bootstrap()
+&gt;       MM.loadMap()
+
+tests/qt/test_MudMapper.py:17: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;application.Application instance at 0x1084141b8&gt;
+
+    def loadMap(self):
+&gt;       mapControllerInstance = DIRequest(&apos;controllerMap&apos;).instance.createMap()
+
+application.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;controller.map.Map object at 0x1084d3c20&gt;
+
+    def createMap(self):
+    
+        self.destroyMap()
+    
+        newMap = Factory.createNewMap()
+    
+        self.mapModelCreated.emit(newMap)
+    
+&gt;       initialLevel = next(newMap.levels.itervalues())
+E       AttributeError: &apos;function&apos; object has no attribute &apos;itervalues&apos;
+
+controller/map.py:35: AttributeError</error></testcase><testcase classname="tests.qt.test_controllerMap.TestApplication" name="test_startUp" time="0.000326156616211"/><testcase classname="tests.unit.controller.test_mapController.TestControllerMap" name="test_createNewMapIsEmitting" time="0.000499963760376"><failure message="test failure">self = &lt;test_mapController.TestControllerMap instance at 0x10840b3b0&gt;
+signalSniffer = &lt;tests.signals.ConnectionBox object at 0x10842c050&gt;
+
+    def test_createNewMapIsEmitting(self, signalSniffer):
+    
+        controller = mapController()
+    
+        controller.mapModelCreated.connect(signalSniffer.slotSlot)
+    
+&gt;       controller.createMap()
+
+tests/unit/controller/test_mapController.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;controller.map.Map object at 0x10842cd40&gt;
+
+    def createMap(self):
+    
+        self.destroyMap()
+    
+        newMap = Factory.createNewMap()
+    
+        self.mapModelCreated.emit(newMap)
+    
+&gt;       initialLevel = next(newMap.levels.itervalues())
+E       AttributeError: &apos;function&apos; object has no attribute &apos;itervalues&apos;
+
+controller/map.py:35: AttributeError</failure></testcase><testcase classname="tests.unit.controller.test_mapController.TestControllerMap" name="test_createNewMapIsDestroyingCurrentMap" time="0.00043511390686"><failure message="test failure">self = &lt;test_mapController.TestControllerMap instance at 0x10841add0&gt;
+signalSniffer = &lt;tests.signals.ConnectionBox object at 0x10841d0e0&gt;
+
+    def test_createNewMapIsDestroyingCurrentMap(self, signalSniffer):
+    
+        controller = mapController()
+    
+&gt;       controller.createMap()
+
+tests/unit/controller/test_mapController.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;controller.map.Map object at 0x10841d170&gt;
+
+    def createMap(self):
+    
+        self.destroyMap()
+    
+        newMap = Factory.createNewMap()
+    
+        self.mapModelCreated.emit(newMap)
+    
+&gt;       initialLevel = next(newMap.levels.itervalues())
+E       AttributeError: &apos;function&apos; object has no attribute &apos;itervalues&apos;
+
+controller/map.py:35: AttributeError</failure></testcase><testcase classname="tests.unit.controller.test_mapViewportController.TestControllerMap" name="test_createMap" time="0.00224304199219"/><testcase classname="tests.unit.controller.test_mapViewportController.TestControllerMap" name="test_destroyMap" time="0.00305390357971"/><testcase classname="tests.unit.model.test_helper.TestClassGeometry" name="test_snapToGrid" time="0.000288963317871"/><testcase classname="tests.unit.model.test_map.TestClassLevel" name="test_addZone" time="0.000278949737549"/><testcase classname="tests.unit.model.test_map.TestClassMap" name="test_addZone" time="0.000226974487305"/><testcase classname="tests.unit.model.test_map.TestClassMap" name="test_addLevel" time="0.000159978866577"/><testcase classname="tests.unit.model.test_map.TestClassFactory" name="test_createNewMap" time="0.000244140625"/><testcase classname="tests.unit.model.test_room.TestClassRoom" name="test_addExit" time="0.000221967697144"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_initMethod" time="0.000188112258911"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_updateMethod" time="0.000262022018433"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_updateFromPointMethod" time="0.000296831130981"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_updateFromRectMethod" time="0.000248908996582"/><testcase classname="tests.unit.model.test_room.TestClassGeometry" name="test_updateFromViewMethod" time="0.000576019287109"/><testcase classname="tests.unit.model.test_room.TestClassExits" name="test_hasExitInDirectionMethod" time="0.000205993652344"/><testcase classname="tests.unit.model.test_room.TestClassExits" name="test_getExitByDirectionMethod" time="0.000242948532104"/><testcase classname="tests.unit.model.test_room.TestClassExits" name="test_getExitByLabelMethod" time="0.000232219696045"/><testcase classname="tests.unit.model.test_room.TestClassExit" name="test_kwargsInit" time="0.000368118286133"/><testcase classname="tests.unit.model.test_tools.TestTools" name="test_enum" time="0.000205039978027"/></testsuite>

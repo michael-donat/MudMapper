@@ -25,6 +25,7 @@ class RuntimeConfig(ConfigParser.SafeConfigParser):
 class AssetsConfig(object):
 
     __baseDir=None
+    __toolbar=None
 
     IMAGE_SPLASH_SCREEN = '/assets/images/splash.png'
 
@@ -34,6 +35,7 @@ class AssetsConfig(object):
 
     def __init__(self, baseDir):
         self.__baseDir = baseDir
+        self.__toolbar = ToolbarConfig(baseDir)
 
     def getSplashScreen(self):
         return self.__baseDir+self.IMAGE_SPLASH_SCREEN
@@ -43,3 +45,30 @@ class AssetsConfig(object):
 
     def getTrayIcon(self):
         return self.__baseDir+self.ICON_SYSTEM_TRAY
+
+    def toolbar(self):
+        return self.__toolbar
+
+class ToolbarConfig(object):
+
+    ROOM_ICON = '/assets/images/toolbar/room.png'
+    LABEL_ICON = '/assets/images/toolbar/label.png'
+    FILL_ICON = '/assets/images/toolbar/background.png'
+    POINTER_ICON = '/assets/images/toolbar/pointer.png'
+
+    __baseDir=None
+
+    def __init__(self, baseDir):
+        self.__baseDir = baseDir
+
+    def getRoomIcon(self):
+        return self.__baseDir+self.ROOM_ICON
+
+    def getFillIcon(self):
+        return self.__baseDir+self.FILL_ICON
+
+    def getLabelIcon(self):
+        return self.__baseDir+self.LABEL_ICON
+
+    def getPointerIcon(self):
+        return self.__baseDir+self.POINTER_ICON

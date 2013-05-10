@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>../images/toolbar/background.png</file>
+    <file>../images/toolbar/label.png</file>
+    <file>../images/toolbar/room.png</file>
+  </qresource>
+</RCC>

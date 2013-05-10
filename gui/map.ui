@@ -6,48 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>318</width>
-    <height>190</height>
+    <width>670</width>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <property name="margin">
-     <number>0</number>
-    </property>
-    <item>
-     <widget class="QGraphicsView" name="mapViewport">
-      <property name="renderHints">
-       <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::NonCosmeticDefaultPen|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-      </property>
-      <property name="dragMode">
-       <enum>QGraphicsView::RubberBandDrag</enum>
-      </property>
-      <property name="transformationAnchor">
-       <enum>QGraphicsView::AnchorViewCenter</enum>
-      </property>
-      <property name="resizeAnchor">
-       <enum>QGraphicsView::AnchorViewCenter</enum>
-      </property>
-      <property name="viewportUpdateMode">
-       <enum>QGraphicsView::SmartViewportUpdate</enum>
-      </property>
-      <property name="rubberBandSelectionMode">
-       <enum>Qt::ContainsItemShape</enum>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+  <widget class="QWidget" name="mapViewportWrapper"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>318</width>
+     <width>670</width>
      <height>22</height>
     </rect>
    </property>
@@ -130,6 +102,42 @@
    </property>
    <property name="menuRole">
     <enum>QAction::PreferencesRole</enum>
+   </property>
+  </action>
+  <action name="toolbarActionCreateRoom">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/images/toolbar/room.png</normaloff>:/icons/images/toolbar/room.png</iconset>
+   </property>
+   <property name="text">
+    <string>CreateRoom</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new room</string>
+   </property>
+  </action>
+  <action name="toolbarActionCreateLabel">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/images/toolbar/label.png</normaloff>:/icons/images/toolbar/label.png</iconset>
+   </property>
+   <property name="text">
+    <string>CreateLabel</string>
+   </property>
+   <property name="toolTip">
+    <string>Create label</string>
+   </property>
+  </action>
+  <action name="toolbarActionCreateBackground">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/images/toolbar/background.png</normaloff>:/icons/images/toolbar/background.png</iconset>
+   </property>
+   <property name="text">
+    <string>CreateBackground</string>
+   </property>
+   <property name="toolTip">
+    <string>Create background</string>
    </property>
   </action>
  </widget>

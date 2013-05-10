@@ -4,6 +4,8 @@ python:
 virtualenv:
   # This allows installing PyQt using apt-get and being able to import it.
   system_site_packages: true
+install:
+  - "pip install -U mock"
 before_install:
   # On Python 2.7 we install PyQt4 and run the UI tests.
   - source .travis_before_install
