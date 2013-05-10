@@ -8,7 +8,7 @@ DIContainer.register('Config', RuntimeConfig(sys.argv))
 
 from model.helper import ComponentRequest as DIRequest
 
-from controller import mainWindow as mainWindowController, mapViewport as mapViewportController
+from controller import mainWindow as mainWindowController, mapViewport as mapViewportController, map as mapController
 from PyQt4 import QtGui
 import model.map
 import view.application as view
@@ -26,12 +26,7 @@ class Application:
     def __init__(self):
         self.__controllers=[]
 
-    def __wireDependencies(self):
-        self.__mapRegistry = model.map.MapRegistry()
-        DIContainer.register('MapRegistry', self.__mapRegistry)
-
     def bootstrap(self):
-        self.__wireDependencies()
         self.__QApplication = QtGui.QApplication([])
 
     def QApplication(self):
@@ -61,8 +56,18 @@ class Application:
         return uiMainWindow
 
     def __wire(self):
-        mainWindowController.Bootstrap(self.__controllers, self.mainWindow())
-        mapViewportController.Bootstrap(self.__controllers, self.__mapRegistry, self.mainWindow())
+        mainWindowController.Bootstrap(self.mainWindow())
+        mapViewportController.Bootstrap(self.mainWindow())
+        mapController.Bootstrap()
+
+        self.__wireSignals()
+
+    def __wireSignals(self):
+
+        mapControllerInstance = DIRequest('controllerMap').instance
+        mapViewportControllerInstance = DIRequest('controllerMapViewport').instance
+
+        mapControllerInstance.newMapModelCreated.connect(mapViewportControllerInstance.createMap)
 
     def mainWindow(self):
         return self.__uiMainWindow
@@ -73,5 +78,8 @@ class Application:
 
     def run(self):
         sys.exit(self.QApplication().exec_())
+
+    def exit(self, code=0):
+        self.QApplication().exit(code)
 
 

@@ -1,62 +1,95 @@
 from PyQt4 import QtCore
 from uuid import uuid1
 
-class Level(object):
-    __id=None
 
-    def __init__(self):
-        self.__id=str(uuid1())
+class Map(object):
+
+    __id=None
+    __rooms=None
+    __zones=None
+    __levels=None
+
+    def __init__(self, **kwargs):
+        self.__id = kwargs['id'] if kwargs.has_key('id') else uuid1()
+        self.__zones={}
+        self.__rooms={}
+        self.__levels={}
 
     def id(self):
         return self.__id
 
-class Map(object):
-
-    __levels=None
-
-    def __init__(self):
-        self.__levels={}
+    def zones(self):
+        return self.__zones
 
     def levels(self):
         return self.__levels
 
-    def addLevel(self, level, index=0):
-        index = str(index)
-        if hasattr(self.__levels, index):
-            raise ValueError('Level %s already exists' % index)
-        self.__levels[index] = level
-        return level
+    def rooms(self):
+        return self.__rooms
 
-    def destroy(self):
-        pass
+    def addZone(self, mapZone):
+        if not isinstance(mapZone, Zone):
+            raise TypeError('mapZone is not an instance of Zone, %s given instead' % type(mapZone))
 
-class MapRegistry(QtCore.QObject):
+        self.__zones[mapZone.id()] = mapZone
 
-    mapCreated = QtCore.pyqtSignal(Map)
-    levelCreated = QtCore.pyqtSignal(Level)
-    levelSwitched = QtCore.pyqtSignal(Level)
-    mapDestroyed = QtCore.pyqtSignal()
+    def addLevel(self, mapLevel):
+        if not isinstance(mapLevel, Level):
+            raise TypeError('mapLevel is not an instance of Level, %s given instead' % type(mapLevel))
 
-    __currentLevel=None
-
-    __map=None
-
-    def createMap(self):
-        if isinstance(self.map(), Map):
-            self.map().destroy()
-            self.mapDestroyed.emit()
-        self.__map = Map()
-        self.mapCreated.emit(self.__map)
-        level = Level()
-        self.__map.addLevel(level)
-        self.levelCreated.emit(level)
-        self.setLevel(level)
-
-    def setLevel(self, level):
-        self.__currentLevel = level
-        self.levelSwitched.emit(level)
-
-    def map(self):
-        return self.__map
+        self.__levels[mapLevel.id()] = mapLevel
 
 
+class Zone(object):
+    __id=None
+    __name=None
+
+    def __init__(self, **kwargs):
+        self.__id = kwargs['id'] if kwargs.has_key('id') else uuid1()
+        self.__name = kwargs['name'] if kwargs.has_key('name') else 'Unnamed'
+
+    def id(self):
+        return self.__id
+
+    def name(self):
+        return self.__name
+
+
+
+class Level(object):
+    __id=None
+    __index=None
+    __zone=None
+
+    def __init__(self, **kwargs):
+        self.__id = kwargs['id'] if kwargs.has_key('id') else uuid1()
+        self.__name = kwargs['index'] if kwargs.has_key('index') else 0
+
+    def id(self):
+        return self.__id
+
+    def index(self):
+        return self.__index
+
+    def assignToZone(self, mapZone):
+        if not isinstance(mapZone, Zone):
+            raise TypeError('mapZone is not an instance of Zone, %s given instead' % type(mapZone))
+
+        self.__zone = mapZone
+
+    def zone(self):
+        return self.__zone
+
+
+
+class Factory(object):
+
+    @staticmethod
+    def createNewMap():
+        newMap = Map()
+        mapZone = Zone()
+        newMap.addZone(mapZone)
+        mapLevel = Level()
+        mapLevel.assignToZone(mapZone)
+        newMap.addLevel(mapLevel)
+        return newMap

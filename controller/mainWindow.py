@@ -1,13 +1,17 @@
 __author__ = 'thornag'
 
 from PyQt4 import QtGui
+from model.helper import container as di, ComponentRequest
 
 class Bootstrap(object):
-    def __init__(self, controllerRegistry, mainWindow):
-        controllerRegistry += [FileMenu(mainWindow)]
+    def __init__(self,  mainWindow):
+        di.register('controllerFileMenu', FileMenu(mainWindow))
 
 
 class FileMenu(object):
+
+    mapController = ComponentRequest('controllerMap')
+
     def __init__(self, menu):
         menu.actionNew.triggered.connect(self.new)
         menu.actionOpen.triggered.connect(self.open)
@@ -18,7 +22,7 @@ class FileMenu(object):
 
 
     def new(self):
-        pass
+        self.mapController.createMap()
 
     def open(self):
         pass
