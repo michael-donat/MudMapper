@@ -2,6 +2,7 @@ import sys
 
 from model.helper import container as DIContainer
 from model.config import RuntimeConfig
+from model.helper import Geometry as GeometryHelper
 
 #need to register RuntimeConfig dependency first to avoid race conditions
 DIContainer.register('Config', RuntimeConfig(sys.argv))
@@ -64,15 +65,21 @@ class Application:
 
         mapControllerInstance.mapModelCreated.connect(mapViewportControllerInstance.createMap)
         mapControllerInstance.mapModelDestroyed.connect(mapViewportControllerInstance.destroyMap)
-
+        mapControllerInstance.mapLevelSelected.connect(mapViewportControllerInstance.selectLevel)
+        mapControllerInstance.mapRoomCreated.connect(mapViewportControllerInstance.createRoom)
 
         mapViewportControllerInstance.roomCreateRequest.connect(mapControllerInstance.createRoomAt)
+
 
         fileMenuController.wireMenu(uiMainWindow)
         toolbarController.wireToolbarActions(uiMainWindow, uiToolbar)
 
+        geometryHelper = GeometryHelper(self.__config.drawing())
+
         DIContainer.register('controllerMap', mapControllerInstance)
         DIContainer.register('controllerMapViewport', mapViewportControllerInstance)
+        DIContainer.register('geometryHelper', geometryHelper)
+
 
     def QApplication(self):
         return self.__QApplication

@@ -1,5 +1,6 @@
 import os
 import ConfigParser
+from PyQt4 import QtCore
 
 class RuntimeConfig(ConfigParser.SafeConfigParser):
 
@@ -8,6 +9,8 @@ class RuntimeConfig(ConfigParser.SafeConfigParser):
 
     __width=None
     __height=None
+
+    __drawingConfig=None
 
     def __init__(self, argv):
         ConfigParser.SafeConfigParser.__init__(self)
@@ -18,9 +21,47 @@ class RuntimeConfig(ConfigParser.SafeConfigParser):
     def assets(self):
         return self.__assetsConfig
 
+    def drawing(self):
+        if self.__drawingConfig is None:
+            self.__drawingConfig = DrawingConfig(self)
+
+        return self.__drawingConfig
+
     def __readDefaults(self):
         self.read(self.__baseDir+'/config/defaults.ini')
 
+class DrawingConfig(object):
+
+    __boxSize=None
+    __midPoint=None
+    __edgeSize=None
+    __exitSize=None
+    __padding=None
+
+    def __init__(self, config):
+        self.__boxSize = config.getint('room', 'box')
+        self.__midPoint = config.getint('room', 'box') / 2
+        self.__edgeSize = config.getint('room', 'inside')
+        self.__exitSize = config.getint('room', 'exit')
+        self.__padding = (config.getint('room', 'box') - (config.getint('room', 'inside') + (2 * config.getint('room', 'exit')))) / 2
+
+    def getPadding(self):
+        return self.__padding
+
+    def getExitSize(self):
+        return self.__exitSize
+
+    def getBoxSize(self):
+        return self.__boxSize
+
+    def getRoomSize(self):
+        return self.__edgeSize
+
+    def getMidPoint(self):
+        return self.__midPoint
+
+    def getBoundingRect(self):
+        return QtCore.QRectF(0,0,self.__boxSize, self.__boxSize)
 
 class AssetsConfig(object):
 

@@ -53,6 +53,7 @@ class MainWindow(mainWindowBlueprint, mainWindowBase):
         self.setupUi(self)
         self.mapViewport = Viewport()
         self.setCentralWidget(self.mapViewport)
+        self.mapViewport.scale(0.3,0.3)
         self.mapViewport.show()
 
     def getMapViewport(self):

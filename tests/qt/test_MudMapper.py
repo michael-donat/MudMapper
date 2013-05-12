@@ -25,8 +25,11 @@ class TestApplication:
         MM = AppFixture
 
         mapControllerInstance = ComponentRequest('controllerMap').instance
+        mapViewportControllerInstance = ComponentRequest('controllerMapViewport').instance
 
         assert mapControllerInstance.mapModel() is not None, 'Map should be auto created on startup'
+        assert len(mapViewportControllerInstance.scenes()) == 1
+        assert MM.mainWindow().getMapViewport().scene() is not None
 
 
 

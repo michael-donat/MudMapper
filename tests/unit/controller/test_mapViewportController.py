@@ -31,8 +31,7 @@ class TestControllerMap:
         controller.setView(mockViewport)
         controller.createMap(mockMapModel)
 
-        assert controller.scenes().has_key('some_id')
-        assert len(controller.scenes()['some_id']) == 2
+        assert len(controller.scenes()) == 2
 
     def test_destroyMap(self, app):
 

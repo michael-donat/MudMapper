@@ -3,7 +3,7 @@ __author__ = 'thornag'
 from PyQt4 import QtCore
 from model import map as mapModel
 from model import room as roomModel
-from model.helper import container as di
+from model.helper import container as di, ComponentRequest
 
 from model.map import Factory
 
@@ -17,6 +17,7 @@ class Map(QtCore.QObject):
     mapLevelSelected = QtCore.pyqtSignal(mapModel.Level)
 
     __map=None
+    __geometryHelper=ComponentRequest('geometryHelper')
 
     def __init__(self):
         super(Map, self).__init__()
@@ -34,9 +35,13 @@ class Map(QtCore.QObject):
 
         initialLevel = next(newMap.levels().itervalues())
 
-        self.mapLevelSelected.emit(initialLevel)
+        self.selectLevel(initialLevel)
 
         self.__map = newMap
+
+    def selectLevel(self, level):
+        self.mapLevelSelected.emit(level)
+
 
     def destroyMap(self):
 
@@ -49,7 +54,9 @@ class Map(QtCore.QObject):
 
     def createRoomAt(self, position):
 
-        newRoom = roomModel.Room()
+        position = self.__geometryHelper.snapToGrid(position)
+
+        newRoom = Factory.createNewRoom()
         newRoom.geometry().updateFromPoint(position)
 
         #self.mapModel().
