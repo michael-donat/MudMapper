@@ -54,6 +54,8 @@ class Map(QtCore.QObject):
 
     def createRoomAt(self, position):
 
+        print ''
+
         position = self.__geometryHelper.snapToGrid(position)
 
         newRoom = Factory.createNewRoom()

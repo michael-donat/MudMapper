@@ -54,7 +54,7 @@ class Map(QtCore.QObject):
 
     def processMouseRelease(self, QMouseEvent):
 
-        if self.__clickMode is None: return
+        if self.__clickMode is None: return False
 
         QMouseEvent.accept()
 

@@ -43,7 +43,7 @@ class DrawingConfig(object):
         self.__midPoint = config.getint('room', 'box') / 2
         self.__edgeSize = config.getint('room', 'inside')
         self.__exitSize = config.getint('room', 'exit')
-        self.__padding = (config.getint('room', 'box') - (config.getint('room', 'inside') + (2 * config.getint('room', 'exit')))) / 2
+        self.__padding = config.getint('room', 'padding')
 
     def getPadding(self):
         return self.__padding

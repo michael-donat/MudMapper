@@ -7,9 +7,8 @@ from PyQt4 import QtCore
 @pytest.fixture
 def ConfigFixture():
     class Config:
-        def getBoxSize(self): return 20
-        def getMidPoint(self): return 10
-        def getPadding(self): return 10
+        def getBoxSize(self): return 100
+        def getPadding(self): return 20
     return Config()
 
 
@@ -21,20 +20,11 @@ class TestClassGeometry:
 
     def test_snapToGrid(self, GeometryFixture):
 
-        assert QtCore.QPointF(0, 0) == GeometryFixture.snapToGrid(QtCore.QPointF(5, 5))
-        assert QtCore.QPointF(0, 0) == GeometryFixture.snapToGrid(QtCore.QPointF(13, 5))
-        assert QtCore.QPointF(0, 0) == GeometryFixture.snapToGrid(QtCore.QPointF(13, 17))
-        assert QtCore.QPointF(0, 0) == GeometryFixture.snapToGrid(QtCore.QPointF(21, 21))
-        assert QtCore.QPointF(30, 30) == GeometryFixture.snapToGrid(QtCore.QPointF(31, 31))
-        assert QtCore.QPointF(-30, -30) == GeometryFixture.snapToGrid(QtCore.QPointF(-5, -5))
-        assert QtCore.QPointF(-30, -30) == GeometryFixture.snapToGrid(QtCore.QPointF(-5, -13))
-        assert QtCore.QPointF(-30, -30) == GeometryFixture.snapToGrid(QtCore.QPointF(-13, -17))
+        #with area of size 30 (as above)Event at -1540x-700
+        assert QtCore.QPoint(-100, -100) == GeometryFixture.snapToGrid(QtCore.QPoint(-100, -100))
+        assert QtCore.QPointF(-100, -100) == GeometryFixture.snapToGrid(QtCore.QPointF(-100, -100))
+        assert QtCore.QPointF(-220.0, -100.0) == GeometryFixture.snapToGrid(QtCore.QPointF(-173.333333333, -36.6666666667))
 
-    def test_snapToHalfGrid(self, GeometryFixture):
 
-        assert QtCore.QPointF(0, 0) == GeometryFixture.snapToHalfGrid(QtCore.QPointF(5, 5))
-        assert QtCore.QPointF(20, 0) == GeometryFixture.snapToHalfGrid(QtCore.QPointF(13, 5))
-        assert QtCore.QPointF(20, 20) == GeometryFixture.snapToHalfGrid(QtCore.QPointF(13, 17))
-        assert QtCore.QPointF(-20, -20) == GeometryFixture.snapToHalfGrid(QtCore.QPointF(-5, -5))
-        assert QtCore.QPointF(-20, -30) == GeometryFixture.snapToHalfGrid(QtCore.QPointF(-5, -13))
-        assert QtCore.QPointF(-30, -30) == GeometryFixture.snapToHalfGrid(QtCore.QPointF(-13, -17))
+
+

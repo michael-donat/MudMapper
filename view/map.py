@@ -24,6 +24,9 @@ class Viewport(QtGui.QGraphicsView):
         """
         :param QMouseEvent: QtGui.QMouseEvent
         """
+
+        print 'mouse release'
+
         if not self.__controller.processMouseRelease(QMouseEvent):
             return super(Viewport, self).mouseReleaseEvent(QMouseEvent)
 
@@ -60,16 +63,16 @@ class RoomComponents(object):
 
     def __init__(self):
         self.__boundingRect = config.getBoundingRect()
-        self.__roomRect = QtCore.QRect(config.getPadding()+config.getExitSize(), config.getPadding()+config.getExitSize(), config.getRoomSize(), config.getRoomSize())
+        self.__roomRect = QtCore.QRect(config.getExitSize(), config.getExitSize(), config.getRoomSize(), config.getRoomSize())
         self.__exits = {
-            Directions.N: QtCore.QLine(config.getMidPoint(),config.getPadding(),config.getMidPoint(), config.getPadding()+config.getExitSize()),
-            Directions.NE: QtCore.QLine(config.getBoxSize()-config.getPadding(), config.getPadding(), config.getBoxSize()-config.getPadding()-config.getExitSize(), config.getPadding()+config.getExitSize()),
-            Directions.E: QtCore.QLine(config.getBoxSize()-config.getPadding(),config.getMidPoint(), config.getBoxSize()-config.getPadding()-config.getExitSize(), config.getMidPoint()),
-            Directions.SE: QtCore.QLine(config.getBoxSize()-config.getPadding(),config.getBoxSize()-config.getPadding(), config.getBoxSize()-config.getPadding()-config.getExitSize(), config.getBoxSize()-config.getPadding()-config.getExitSize(),),
-            Directions.S: QtCore.QLine(config.getMidPoint(),config.getBoxSize()-config.getPadding(),config.getMidPoint(), config.getBoxSize()-config.getPadding()-config.getExitSize()),
-            Directions.SW: QtCore.QLine(config.getPadding(), config.getBoxSize()-config.getPadding(), config.getPadding()+config.getExitSize(), config.getBoxSize()-config.getPadding()-config.getExitSize()),
-            Directions.W: QtCore.QLine(config.getPadding(), config.getMidPoint(), config.getPadding()+config.getExitSize(), config.getMidPoint()),
-            Directions.NW: QtCore.QLine(config.getPadding(), config.getPadding(), config.getPadding()+config.getExitSize(), config.getPadding()+config.getExitSize())
+            Directions.N: QtCore.QLine(config.getMidPoint(),0,config.getMidPoint(), 0+config.getExitSize()),
+            Directions.NE: QtCore.QLine(config.getBoxSize()-0, 0, config.getBoxSize()-0-config.getExitSize(), 0+config.getExitSize()),
+            Directions.E: QtCore.QLine(config.getBoxSize()-0,config.getMidPoint(), config.getBoxSize()-0-config.getExitSize(), config.getMidPoint()),
+            Directions.SE: QtCore.QLine(config.getBoxSize()-0,config.getBoxSize()-0, config.getBoxSize()-0-config.getExitSize(), config.getBoxSize()-0-config.getExitSize(),),
+            Directions.S: QtCore.QLine(config.getMidPoint(),config.getBoxSize()-0,config.getMidPoint(), config.getBoxSize()-0-config.getExitSize()),
+            Directions.SW: QtCore.QLine(0, config.getBoxSize()-0, 0+config.getExitSize(), config.getBoxSize()-0-config.getExitSize()),
+            Directions.W: QtCore.QLine(0, config.getMidPoint(), 0+config.getExitSize(), config.getMidPoint()),
+            Directions.NW: QtCore.QLine(0, 0, 0+config.getExitSize(), 0+config.getExitSize())
         }
         self.__arrowHeads = {}
         for direction in self.__exits:
@@ -116,6 +119,8 @@ class Room(QtGui.QGraphicsItem):
 
     def itemChange(self, QGraphicsItem_GraphicsItemChange, QVariant):
         if QGraphicsItem_GraphicsItemChange == QtGui.QGraphicsItem.ItemPositionChange:
-            return coordinatesHelper.instance.snapToGrid(QVariant.toPoint(), True)
+            point = QVariant.toPoint()
+            print point
+            return coordinatesHelper.instance.snapToGrid(QVariant.toPoint() )
 
         return super(Room, self).itemChange(QGraphicsItem_GraphicsItemChange, QVariant)

@@ -1,5 +1,6 @@
 __author__ = 'donatm'
 
+import math
 
 class Geometry(object):
     configMidPoint = 0
@@ -7,36 +8,41 @@ class Geometry(object):
     configPadding = 0
     def __init__(self, configuration):
         self.configBoxSize = configuration.getBoxSize()
-        self.configMidPoint = configuration.getMidPoint()
         self.configPadding = configuration.getPadding()
 
-    def snapToHalfGrid(self, QFPoint, fromMidpoint=False):
-        x = int(QFPoint.x() / (self.configBoxSize / 2)) * (self.configBoxSize / 2)
-        y = int(QFPoint.y() / (self.configBoxSize / 2)) * (self.configBoxSize / 2)
+    def snapToGrid(self, QFPoint):
 
-        if not fromMidpoint and QFPoint.x() < 0: x -= self.configBoxSize / 2
-        if not fromMidpoint and QFPoint.y() < 0: y -= self.configBoxSize / 2
+        print 'Event at %sx%s' % (QFPoint.x(), QFPoint.y())
 
-        if fromMidpoint and abs(QFPoint.x()) % (self.configBoxSize / 2) > (self.configMidPoint / 2):
-            if(QFPoint.x() < 0):
-                x -= self.configBoxSize / 2
-            else:
-                x += self.configBoxSize / 2
+        areaSize = self.configBoxSize + self.configPadding
 
-        if fromMidpoint and abs(QFPoint.y()) % (self.configBoxSize / 2) > (self.configMidPoint / 2):
-            if(QFPoint.y() < 0):
-                y -= self.configBoxSize / 2
-            else:
-                y += self.configBoxSize / 2
+        x = math.floor(abs(QFPoint.x()) / areaSize) * areaSize
+        y = math.floor(abs(QFPoint.y()) / areaSize) * areaSize
+
+
+
+        if QFPoint.x() < 0:
+            x *= -1
+            x -= areaSize
+
+        if QFPoint.y() < 0:
+            y *= -1
+            y -= areaSize
+
+
+        x += self.configPadding
+        y += self.configPadding
 
         QFPoint.setX(x)
         QFPoint.setY(y)
 
+        print 'Adapted to %sx%s' % (QFPoint.x(), QFPoint.y())
+
+        print 'Area size %s' % areaSize
+
         return QFPoint
 
-    def snapToGrid(self, QFPoint, fromMidpoint=False):
-        x = int(QFPoint.x() / (self.configBoxSize + self.configPadding)) * self.configBoxSize
-        y = int(QFPoint.y() / (self.configBoxSize + self.configPadding)) * self.configBoxSize
+    def dummy(self):
 
         if not fromMidpoint and QFPoint.x() < 0: x -= (self.configBoxSize + self.configPadding)
         if not fromMidpoint and QFPoint.y() < 0: y -= (self.configBoxSize + self.configPadding)
