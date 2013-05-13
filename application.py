@@ -13,6 +13,7 @@ from controller import mainWindow as mainWindowController, mapViewport as mapVie
 from PyQt4 import QtGui
 import model.map
 import view.application as view
+from view.map  import changeEmitter as roomViewChangeEmitter
 import sys
 
 
@@ -70,6 +71,9 @@ class Application:
 
         mapViewportControllerInstance.roomCreateRequest.connect(mapControllerInstance.createRoomAt)
 
+        roomViewChangeEmitter.roomPositionChanged.connect(mapControllerInstance.roomPositionChanged)
+        roomViewChangeEmitter.roomDoubleClicked.connect(mapControllerInstance.markCurrentlyVisitedRoom)
+        roomViewChangeEmitter.roomDoubleClicked.connect(mapViewportControllerInstance.markCurrentlyVisitedRoom)
 
         fileMenuController.wireMenu(uiMainWindow)
         toolbarController.wireToolbarActions(uiMainWindow, uiToolbar)

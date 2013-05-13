@@ -17,12 +17,16 @@ class Map(QtCore.QObject):
     mapLevelSelected = QtCore.pyqtSignal(mapModel.Level)
 
     __map=None
-    __geometryHelper=ComponentRequest('geometryHelper')
+
+    __currentLevel=None
 
     def __init__(self):
         super(Map, self).__init__()
 
     def mapModel(self):
+        """
+        :return: mapModel.Map
+        """
         return self.__map
 
     def createMap(self):
@@ -31,15 +35,18 @@ class Map(QtCore.QObject):
 
         newMap = Factory.createNewMap()
 
+        self.__map = newMap
+
         self.mapModelCreated.emit(newMap)
 
         initialLevel = next(newMap.levels().itervalues())
 
         self.selectLevel(initialLevel)
 
-        self.__map = newMap
+
 
     def selectLevel(self, level):
+        self.__currentLevel = level
         self.mapLevelSelected.emit(level)
 
 
@@ -52,18 +59,20 @@ class Map(QtCore.QObject):
 
         self.__map=None
 
+
     def createRoomAt(self, position):
 
-        print ''
-
-        position = self.__geometryHelper.snapToGrid(position)
-
-        newRoom = Factory.createNewRoom()
+        newRoom = Factory.createNewRoom(self.mapModel(), self.__currentLevel)
         newRoom.geometry().updateFromPoint(position)
-
         #self.mapModel().
 
         self.mapRoomCreated.emit(newRoom)
+
+    def roomPositionChanged(self, roomView):
+        self.mapModel().getRoomById(roomView.modelId()).geometry().updateFromPoint(roomView.pos())
+
+    def markCurrentlyVisitedRoom(self, roomView):
+        pass
 
 
 

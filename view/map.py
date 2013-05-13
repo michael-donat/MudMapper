@@ -5,6 +5,7 @@ from model.helper import ComponentRequest
 from model.room import Directions
 import math
 
+
 class Viewport(QtGui.QGraphicsView):
 
     __controller=None
@@ -24,11 +25,16 @@ class Viewport(QtGui.QGraphicsView):
         """
         :param QMouseEvent: QtGui.QMouseEvent
         """
-
-        print 'mouse release'
-
         if not self.__controller.processMouseRelease(QMouseEvent):
             return super(Viewport, self).mouseReleaseEvent(QMouseEvent)
+
+    def keyPressEvent(self, QKeyEvent):
+
+        if QKeyEvent.matches(QtGui.QKeySequence.ZoomIn):
+            self.scale(1.2, 1.2)
+
+        if QKeyEvent.matches(QtGui.QKeySequence.ZoomOut):
+            self.scale(0.8, 0.8)
 
 
 config = ComponentRequest('Config').instance.drawing()
@@ -40,6 +46,8 @@ class RoomComponents(object):
     __roomRect = None
     __exits = None
     __arrowHeads={}
+
+    __currentlyVisitedBrush=None
 
     def __calculateArrowHead(self, line):
 
@@ -78,25 +86,48 @@ class RoomComponents(object):
         for direction in self.__exits:
             self.__arrowHeads[direction] = self.__calculateArrowHead(self.__exits[direction])
 
+        self.__currentlyVisitedBrush = QtGui.QColor(123,051,123)
+
+
     def boundingRect(self): return self.__boundingRect
     def roomRect(self): return self.__roomRect
     def exits(self): return self.__exits
     def arrowHeads(self): return self.__arrowHeads
 
+    def currentlyVisitedBrush(self):
+        return self.__currentlyVisitedBrush
+
+
 roomComponents = RoomComponents()
 
 class Room(QtGui.QGraphicsItem):
 
-    def __init__(self):
+    __modelId=None
+    __currentlyVisited=None
+
+    def __init__(self, modelId):
         super(Room, self).__init__()
+        self.__modelId = modelId
         self.setFlags(QtGui.QGraphicsItem.ItemSendsGeometryChanges | QtGui.QGraphicsItem.ItemIsSelectable | QtGui.QGraphicsItem.ItemIsMovable | QtGui.QGraphicsItem.ItemIsFocusable)
+
+    def modelId(self):
+        return self.__modelId
 
     def boundingRect(self):
         return roomComponents.boundingRect()
 
+    def setIsCurrentlyVisited(self, isVisited=False):
+        self.__currentlyVisited = bool(isVisited)
+
     def paint(self, painter, option, widget):
 
+        defaultBrush = painter.brush()
 
+        if self.__currentlyVisited:
+            painter.setBrush(roomComponents.currentlyVisitedBrush())
+            painter.drawEllipse(self.boundingRect())
+
+        painter.setBrush(defaultBrush)
 
         painter.drawRect(roomComponents.roomRect())
         painter.drawLine(roomComponents.exits()[Directions.N])
@@ -120,7 +151,22 @@ class Room(QtGui.QGraphicsItem):
     def itemChange(self, QGraphicsItem_GraphicsItemChange, QVariant):
         if QGraphicsItem_GraphicsItemChange == QtGui.QGraphicsItem.ItemPositionChange:
             point = QVariant.toPoint()
-            print point
             return coordinatesHelper.instance.snapToGrid(QVariant.toPoint() )
 
+        if QGraphicsItem_GraphicsItemChange == QtGui.QGraphicsItem.ItemPositionHasChanged:
+            changeEmitter.roomPositionChanged.emit(self) #can't emit signal as QGraphicsItem does not inherit form QObject
+
+
         return super(Room, self).itemChange(QGraphicsItem_GraphicsItemChange, QVariant)
+
+    def mouseDoubleClickEvent(self, QGraphicsSceneMouseEvent):
+        changeEmitter.roomDoubleClicked.emit(self)
+
+class ChangeEmitter(QtCore.QObject):
+    def __init__(self):
+        super(ChangeEmitter, self).__init__()
+
+    roomPositionChanged = QtCore.pyqtSignal(Room)
+    roomDoubleClicked = QtCore.pyqtSignal(Room)
+
+changeEmitter = ChangeEmitter()

@@ -24,6 +24,7 @@ class TestClassGeometry:
         assert QtCore.QPoint(-100, -100) == GeometryFixture.snapToGrid(QtCore.QPoint(-100, -100))
         assert QtCore.QPointF(-100, -100) == GeometryFixture.snapToGrid(QtCore.QPointF(-100, -100))
         assert QtCore.QPointF(-220.0, -100.0) == GeometryFixture.snapToGrid(QtCore.QPointF(-173.333333333, -36.6666666667))
+        assert QtCore.QPointF(140.0, -100.0) == GeometryFixture.snapToGrid(QtCore.QPointF(150.987, -36.6666666667))
 
 
 

@@ -40,7 +40,14 @@ class Map(object):
 
         self.__levels[mapLevel.id()] = mapLevel
 
+    def addRoom(self, mapRoom):
+        if not isinstance(mapRoom, Room):
+            raise TypeError('mapRoom is not an instance of Room, %s given instead' % type(mapRoom))
 
+        self.__rooms[mapRoom.id()] = mapRoom
+
+    def getRoomById(self, id_):
+        return self.__rooms[id_]
 
 class Zone(object):
     __id=None
@@ -97,7 +104,9 @@ class Factory(object):
         return newMap
 
     @staticmethod
-    def createNewRoom():
+    def createNewRoom(Map, Level):
         newRoom = Room()
         newRoom.geometry().update(0,0,config.getBoxSize(),config.getBoxSize())
+        newRoom.setLevel(Level)
+        Map.addRoom(newRoom)
         return newRoom

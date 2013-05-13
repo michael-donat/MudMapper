@@ -5,6 +5,8 @@ from model import map as mapModel
 from model.helper import container as di
 from model.tools import enum
 from view.map import Room as roomView
+from model.helper import container as di, ComponentRequest
+from uuid import UUID as typeUUID
 
 class Map(QtCore.QObject):
 
@@ -14,7 +16,11 @@ class Map(QtCore.QObject):
 
     roomCreateRequest=QtCore.pyqtSignal(QtCore.QPointF)
 
+    __geometryHelper=ComponentRequest('geometryHelper')
+
     CLICK_MODE=enum('ROOM', 'LABEL', 'BACKGROUND')
+
+    currentlySelectedRoom=None
 
     def __init__(self):
         super(Map, self).__init__()
@@ -42,7 +48,7 @@ class Map(QtCore.QObject):
         self.__uiMapViewport.setScene(scene)
 
     def createRoom(self, room):
-        newRoom = roomView()
+        newRoom = roomView(room.id())
         newRoom.setPos(room.geometry().getPoint())
         self.__uiMapViewport.scene().addItem(newRoom)
 
@@ -60,9 +66,20 @@ class Map(QtCore.QObject):
 
         eventPosition = QMouseEvent.pos()
         eventPosition = self.__uiMapViewport.mapToScene(eventPosition)
+        eventPosition = self.__geometryHelper.snapToGrid(eventPosition)
 
         if self.__clickMode == self.CLICK_MODE.ROOM:
             self.roomCreateRequest.emit(eventPosition)
+
+    def markCurrentlyVisitedRoom(self, roomView):
+        if self.currentlySelectedRoom:
+            self.currentlySelectedRoom.setIsCurrentlyVisited(False)
+
+        self.currentlySelectedRoom = roomView
+
+        self.currentlySelectedRoom.setIsCurrentlyVisited(True)
+
+
 
 
 

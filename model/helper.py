@@ -12,8 +12,6 @@ class Geometry(object):
 
     def snapToGrid(self, QFPoint):
 
-        print 'Event at %sx%s' % (QFPoint.x(), QFPoint.y())
-
         areaSize = self.configBoxSize + self.configPadding
 
         x = math.floor(abs(QFPoint.x()) / areaSize) * areaSize
@@ -36,35 +34,8 @@ class Geometry(object):
         QFPoint.setX(x)
         QFPoint.setY(y)
 
-        print 'Adapted to %sx%s' % (QFPoint.x(), QFPoint.y())
-
-        print 'Area size %s' % areaSize
-
         return QFPoint
 
-    def dummy(self):
-
-        if not fromMidpoint and QFPoint.x() < 0: x -= (self.configBoxSize + self.configPadding)
-        if not fromMidpoint and QFPoint.y() < 0: y -= (self.configBoxSize + self.configPadding)
-
-        if fromMidpoint and abs(QFPoint.x()) % self.configBoxSize > self.configMidPoint:
-            if(QFPoint.x() < 0):
-                x -= self.configBoxSize - self.configPadding
-            else:
-                x += self.configBoxSize + self.configPadding
-
-        if fromMidpoint and +abs(QFPoint.y()) % self.configBoxSize > self.configMidPoint:
-            if(QFPoint.y() < 0):
-                y -= (self.configBoxSize + self.configPadding)
-            else:
-                y += (self.configBoxSize + self.configPadding)
-
-        print x, y, self.configPadding
-
-        QFPoint.setX(x)
-        QFPoint.setY(y)
-
-        return QFPoint
 
 class ComponentContainer(object):
     def __init__(self):
