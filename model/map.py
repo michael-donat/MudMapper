@@ -1,7 +1,10 @@
 from PyQt4 import QtCore
 from uuid import uuid1
 from model.helper import ComponentRequest
+from model.helper import generateId
 from model.room import Room
+
+from model.errors import *
 
 class Map(object):
 
@@ -11,7 +14,7 @@ class Map(object):
     __levels=None
 
     def __init__(self, **kwargs):
-        self.__id = kwargs['id'] if kwargs.has_key('id') else uuid1()
+        self.__id = kwargs['id'] if kwargs.has_key('id') else generateId()
         self.__zones={}
         self.__rooms={}
         self.__levels={}
@@ -40,6 +43,20 @@ class Map(object):
 
         self.__levels[mapLevel.id()] = mapLevel
 
+    def addRoom(self, mapRoom):
+        if not isinstance(mapRoom, Room):
+            raise TypeError('mapRoom is not an instance of Room, %s given instead' % type(mapRoom))
+
+        self.__rooms[mapRoom.id()] = mapRoom
+
+
+    def roomById(self, id):
+        if not self.__rooms.has_key(id):
+            raise UnknownRoomError('could not find registered room by id: %s' % id)
+
+        return self.__rooms[id]
+
+
 
 
 class Zone(object):
@@ -47,7 +64,7 @@ class Zone(object):
     __name=None
 
     def __init__(self, **kwargs):
-        self.__id = kwargs['id'] if kwargs.has_key('id') else uuid1()
+        self.__id = kwargs['id'] if kwargs.has_key('id') else generateId()
         self.__name = kwargs['name'] if kwargs.has_key('name') else 'Unnamed'
 
     def id(self):
@@ -64,7 +81,7 @@ class Level(object):
     __zone=None
 
     def __init__(self, **kwargs):
-        self.__id = kwargs['id'] if kwargs.has_key('id') else uuid1()
+        self.__id = kwargs['id'] if kwargs.has_key('id') else generateId()
         self.__name = kwargs['index'] if kwargs.has_key('index') else 0
 
     def id(self):

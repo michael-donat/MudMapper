@@ -5,12 +5,15 @@ from model import map as mapModel
 from model.helper import container as di
 from model.tools import enum
 from view.map import Room as roomView
+from view.map import Level as levelView
 
 class Map(QtCore.QObject):
 
     __uiMapViewport=None
     __uiScenes=None
     __clickMode=None
+
+    __mapModel=None
 
     roomCreateRequest=QtCore.pyqtSignal(QtCore.QPointF)
 
@@ -33,9 +36,10 @@ class Map(QtCore.QObject):
         uiMapViewport.setController(self)
 
     def createMap(self, mapModel):
+        self.__mapModel=mapModel
         o = mapModel.levels()
         for level in mapModel.levels().itervalues():
-            self.__uiScenes[level.id()] = QtGui.QGraphicsScene()
+            self.__uiScenes[level.id()] = levelView(self)
 
     def selectLevel(self, level):
         scene = self.__uiScenes[level.id()]
@@ -43,11 +47,17 @@ class Map(QtCore.QObject):
 
     def createRoom(self, room):
         newRoom = roomView()
-        newRoom.setPos(room.geometry().getPoint())
+        newRoom.configure(room)
         self.__uiMapViewport.scene().addItem(newRoom)
 
     def scenes(self):
         return self.__uiScenes
+
+    def map(self):
+        """
+        :return: mapModel
+        """
+        return self.__mapModel
 
     def destroyMap(self, mapModel):
         self.__uiScenes={}
@@ -64,10 +74,7 @@ class Map(QtCore.QObject):
         if self.__clickMode == self.CLICK_MODE.ROOM:
             self.roomCreateRequest.emit(eventPosition)
 
-
-
-
-
-
-
-
+    def itemPositionChanged(self, modelId, position, roomView):
+        self.map().roomById(modelId).geometry().updateFromView(roomView)
+        room = self.map().roomById(modelId)
+        pass

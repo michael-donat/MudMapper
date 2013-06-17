@@ -4,6 +4,7 @@ from PyQt4 import QtCore
 from model.tools import enum
 from uuid import uuid1
 from model.errors import *
+from model.helper import generateId
 import types
 
 Directions = enum('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'U', 'D')
@@ -16,7 +17,7 @@ class Room(object):
     __level=None
 
     def __init__(self):
-        self.__id=uuid1()
+        self.__id=generateId()
         self.__properties = Properties()
         self.__geometry = Geometry()
         self.__exits = Exits()
@@ -148,7 +149,7 @@ class Exit(object):
 
     def __init__(self, **kwargs):
         self.__masks=[]
-        self.__id=uuid1()
+        self.__id=generateId()
         if kwargs.has_key('direction'):
             self.__direction = kwargs['direction']
         if kwargs.has_key('label'):

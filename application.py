@@ -67,9 +67,7 @@ class Application:
         mapControllerInstance.mapModelDestroyed.connect(mapViewportControllerInstance.destroyMap)
         mapControllerInstance.mapLevelSelected.connect(mapViewportControllerInstance.selectLevel)
         mapControllerInstance.mapRoomCreated.connect(mapViewportControllerInstance.createRoom)
-
         mapViewportControllerInstance.roomCreateRequest.connect(mapControllerInstance.createRoomAt)
-
 
         fileMenuController.wireMenu(uiMainWindow)
         toolbarController.wireToolbarActions(uiMainWindow, uiToolbar)

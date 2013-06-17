@@ -2,6 +2,11 @@ __author__ = 'donatm'
 
 import math
 
+from uuid import uuid1
+
+def generateId():
+    return str(uuid1())
+
 class Geometry(object):
     configMidPoint = 0
     configBoxSize = 0

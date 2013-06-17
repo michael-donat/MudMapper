@@ -61,9 +61,13 @@ class Map(QtCore.QObject):
         newRoom = Factory.createNewRoom()
         newRoom.geometry().updateFromPoint(position)
 
+        self.__map.addRoom(newRoom)
+
         #self.mapModel().
 
         self.mapRoomCreated.emit(newRoom)
+
+        return newRoom
 
 
 

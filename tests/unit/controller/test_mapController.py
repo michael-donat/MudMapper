@@ -43,5 +43,13 @@ class TestControllerMap:
         signalSniffer.assertSignalArrived()
         signalSniffer.assertArgumentTypes(mapModel.Map)
 
+    def test_createRoomRegistersRooms(self):
+
+        controller = mapController()
+        controller.createMap()
+
+        newRoom = controller.createRoomAt(QtCore.QPoint(0,0))
+
+        assert controller.mapModel().roomById(newRoom.id()) is not None, 'Model has room registered'
 
 

@@ -25,10 +25,22 @@ class Viewport(QtGui.QGraphicsView):
         :param QMouseEvent: QtGui.QMouseEvent
         """
 
-        print 'mouse release'
-
         if not self.__controller.processMouseRelease(QMouseEvent):
             return super(Viewport, self).mouseReleaseEvent(QMouseEvent)
+
+class Level(QtGui.QGraphicsScene):
+
+    __controller=None
+
+    def __init__(self, controller):
+        super(Level, self).__init__()
+        self.setController(controller)
+
+    def setController(self, controller):
+        self.__controller = controller
+
+    def controller(self):
+        return self.__controller
 
 
 config = ComponentRequest('Config').instance.drawing()
@@ -87,12 +99,22 @@ roomComponents = RoomComponents()
 
 class Room(QtGui.QGraphicsItem):
 
+    DATA_ID = 0
+
     def __init__(self):
         super(Room, self).__init__()
         self.setFlags(QtGui.QGraphicsItem.ItemSendsGeometryChanges | QtGui.QGraphicsItem.ItemIsSelectable | QtGui.QGraphicsItem.ItemIsMovable | QtGui.QGraphicsItem.ItemIsFocusable)
 
     def boundingRect(self):
         return roomComponents.boundingRect()
+
+    def configure(self, roomModel):
+        print QtCore.QVariant(roomModel.id())
+        self.setData(self.DATA_ID, QtCore.QVariant(roomModel.id()))
+        self.setPos(roomModel.geometry().getPoint())
+
+    def modelId(self):
+        return str(self.data(self.DATA_ID).toString())
 
     def paint(self, painter, option, widget):
 
@@ -120,7 +142,16 @@ class Room(QtGui.QGraphicsItem):
     def itemChange(self, QGraphicsItem_GraphicsItemChange, QVariant):
         if QGraphicsItem_GraphicsItemChange == QtGui.QGraphicsItem.ItemPositionChange:
             point = QVariant.toPoint()
-            print point
-            return coordinatesHelper.instance.snapToGrid(QVariant.toPoint() )
+
+            QPointPosition = coordinatesHelper.instance.snapToGrid(QVariant.toPoint())
+
+            self.notifyPositionChanged()
+
+            return QPointPosition
 
         return super(Room, self).itemChange(QGraphicsItem_GraphicsItemChange, QVariant)
+
+    def notifyPositionChanged(self):
+        if not self.scene(): return
+
+        self.scene().controller().itemPositionChanged(self.modelId(), self.pos(), self)
