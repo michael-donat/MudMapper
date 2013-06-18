@@ -124,6 +124,8 @@ class Room(QtGui.QGraphicsItem):
         roomComponents = self.__roomComponents
 
         painter.drawRect(roomComponents.roomRect())
+
+        """
         painter.drawLine(roomComponents.exits()[Directions.N])
         painter.drawLine(roomComponents.exits()[Directions.NE])
         painter.drawLine(roomComponents.exits()[Directions.E])
@@ -141,6 +143,7 @@ class Room(QtGui.QGraphicsItem):
         painter.drawPolygon(roomComponents.arrowHeads()[Directions.SW])
         painter.drawPolygon(roomComponents.arrowHeads()[Directions.W])
         painter.drawPolygon(roomComponents.arrowHeads()[Directions.NW])
+        """
 
     def itemChange(self, QGraphicsItem_GraphicsItemChange, QVariant):
         if QGraphicsItem_GraphicsItemChange == QtGui.QGraphicsItem.ItemPositionChange:
@@ -158,3 +161,18 @@ class Room(QtGui.QGraphicsItem):
         if not self.scene(): return
 
         self.scene().controller().itemPositionChanged(self.modelId(), self.pos(), self)
+
+    def contextMenuEvent(self, QGraphicsSceneContextMenuEvent):
+
+        menu = QtGui.QMenu()
+        action = QtGui.QAction('Mark as active', self.scene())
+        menu.addAction(action)
+
+        action = QtGui.QAction('Delete', self.scene())
+        menu.addAction(action)
+
+        action = QtGui.QAction('Properties', self.scene())
+        menu.addAction(action)
+
+        menu.exec_(QGraphicsSceneContextMenuEvent.screenPos())
+        QGraphicsSceneContextMenuEvent.accept()

@@ -60,3 +60,15 @@ def createMainWindow():
             return self.mapViewport
 
     return MainWindow()
+
+def createPropertiesWindow():
+    propertiesWindowBlueprint, propertiesWindowBase = uic.loadUiType(config.assets().getPropertiesWindowUI())
+
+    class PropertiesWindow(propertiesWindowBlueprint, propertiesWindowBase):
+
+        def __init__(self, parent=None):
+            super(propertiesWindowBase, self).__init__(parent)
+            self.setupUi(self)
+            self.move(900,350)
+
+    return PropertiesWindow()

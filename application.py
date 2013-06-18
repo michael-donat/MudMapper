@@ -13,6 +13,7 @@ class Application:
 
     __QApplication=None
     __uiMainWindow=None
+    __uiPropertiesWindow=None
     __mapRegistry=None
     __uiToolbar=None
     __dic=None
@@ -42,6 +43,8 @@ class Application:
         self.__uiMainWindow.resize(config.getint('view', 'width'), config.getint('view', 'height'))
         self.__uiMainWindow.setWindowTitle(config.get('meta', 'windowTitle'))
 
+        self.__uiPropertiesWindow = uiPropertiesWindow = view.createPropertiesWindow()
+
         view.SystemTray.getSystemTrayMenu(uiMainWindow)
 
         self.__uiToolbar = uiToolbar = view.Toolbar.getToolbar(uiMainWindow)
@@ -56,6 +59,7 @@ class Application:
         mapControllerInstance.mapModelDestroyed.connect(mapViewportControllerInstance.destroyMap)
         mapControllerInstance.mapLevelSelected.connect(mapViewportControllerInstance.selectLevel)
         mapControllerInstance.mapRoomCreated.connect(mapViewportControllerInstance.createRoom)
+        mapControllerInstance.mapRoomCreated.connect(toolbarController.actionPointer)
         mapViewportControllerInstance.roomCreateRequest.connect(mapControllerInstance.createRoomAt)
 
         fileMenuController.wireMenu(uiMainWindow)
@@ -74,11 +78,16 @@ class Application:
     def toolbar(self):
         return self.__uiToolbar
 
+    def propertiesWindow(self):
+        return self.__uiPropertiesWindow
+
     def show(self):
         self.mainWindow().show()
         self.mainWindow().raise_()
         self.toolbar().show()
         self.toolbar().raise_()
+        self.propertiesWindow().show()
+        self.propertiesWindow().raise_()
 
     def run(self):
         sys.exit(self.QApplication().exec_())

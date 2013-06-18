@@ -38,6 +38,7 @@ class Toolbar():
     mapViewportController = None#ComponentRequest('controllerMapViewport')
 
     __config=None
+    __actions=None
 
     def setConfig(self, config):
         self.__config = config
@@ -47,15 +48,18 @@ class Toolbar():
 
     def wireToolbarActions(self, mainWindow, toolbar):
 
+        self.__actions={}
+
         QActionGroup = QtGui.QActionGroup(toolbar)
 
-        actionPointer = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getPointerIcon()), u"Select", toolbar)
-        actionCreateRoom = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getRoomIcon()), u"Create room", toolbar)
-        actionCreateLabel = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getLabelIcon()), u"Create label", toolbar)
-        actionCreateBackground = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getFillIcon()), u"Create background", toolbar)
+        self.__actions['pointer'] = actionPointer = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getPointerIcon()), u"Select", toolbar)
+        self.__actions['room'] = actionCreateRoom = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getRoomIcon()), u"Create room", toolbar)
+        self.__actions['label'] = actionCreateLabel = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getLabelIcon()), u"Create label", toolbar)
+        self.__actions['background'] = actionCreateBackground = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getFillIcon()), u"Create background", toolbar)
 
         for action in [actionPointer, actionCreateRoom, actionCreateLabel, actionCreateBackground]:
             action.setCheckable(True)
+            action.setShortcutContext(QtCore.Qt.ApplicationShortcut)
             QActionGroup.addAction(action)
             toolbar.addAction(action)
 
@@ -66,21 +70,37 @@ class Toolbar():
         actionCreateLabel.triggered.connect(self.actionCreateLabel)
         actionCreateBackground.triggered.connect(self.actionCreateBackground)
 
+        actionPointer.setShortcut('CTRL+1')
+        actionPointer.setToolTip('Key: CTRL+1')
+
+        actionCreateRoom.setShortcut('CTRL+2')
+        actionCreateRoom.setToolTip('Key: CTRL+2')
+
+        actionCreateLabel.setShortcut('CTRL+3')
+        actionCreateLabel.setToolTip('Key: CTRL+3')
+
+        actionCreateBackground.setShortcut('CTRL+4')
+        actionCreateBackground.setToolTip('Key: CTRL+4')
+
     @QtCore.pyqtSlot(bool)
     def actionPointer(self, state):
         self.mapViewportController.resetClickMode()
+        self.__actions['pointer'].setChecked(True)
 
     @QtCore.pyqtSlot(bool)
     def actionCreateRoom(self, state):
         self.mapViewportController.clickMode(self.mapViewportController.CLICK_MODE.ROOM)
+        self.__actions['room'].setChecked(True)
 
     @QtCore.pyqtSlot(bool)
     def actionCreateLabel(self, state):
         self.mapViewportController.clickMode(self.mapViewportController.CLICK_MODE.LABEL)
+        self.__actions['label'].setChecked(True)
 
     @QtCore.pyqtSlot(bool)
     def actionCreateBackground(self, state):
         self.mapViewportController.clickMode(self.mapViewportController.CLICK_MODE.BACKGROUND)
+        self.__actions['background'].setChecked(True)
 
 
 

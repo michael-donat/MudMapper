@@ -40,11 +40,16 @@ class TestControllerMap:
 
         mockViewport = MagicMock()
         mockMapModel = MagicMock()
+        lvl2Mock = MagicMock()
+        lvl2Mock.id.return_value='lvl2'
         mockMapModel.id.return_value = 'some_id'
+        mockMapModel.levels.return_value = {'level2':lvl2Mock}
 
         controller = mapController()
         controller.setView(mockViewport)
         controller.createMap(mockMapModel)
+
+        assert len(controller.scenes()) is not 0
 
         controller.destroyMap(mockMapModel)
 

@@ -71,6 +71,7 @@ class AssetsConfig(object):
     IMAGE_SPLASH_SCREEN = '/assets/images/splash.png'
 
     UI_MAIN_WINDOW = '/gui/map.ui'
+    UI_PROPERTIES_WINDOW = '/gui/properties.ui'
 
     ICON_SYSTEM_TRAY = '/assets/icons/hychsohn-transparent-bw_128x128x32.png'
 
@@ -83,6 +84,9 @@ class AssetsConfig(object):
 
     def getMainWindowUI(self):
         return self.__baseDir+self.UI_MAIN_WINDOW
+
+    def getPropertiesWindowUI(self):
+        return self.__baseDir+self.UI_PROPERTIES_WINDOW
 
     def getTrayIcon(self):
         return self.__baseDir+self.ICON_SYSTEM_TRAY
