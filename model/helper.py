@@ -41,7 +41,7 @@ class Geometry(object):
 
         return QFPoint
 
-
+"""
 class ComponentContainer(object):
     def __init__(self):
         self.components = {}
@@ -69,3 +69,4 @@ class ComponentRequest(object):
     def __getattr__(self, name):
         self.result = container[self.component]
         return self.result
+"""

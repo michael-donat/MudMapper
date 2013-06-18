@@ -2,12 +2,9 @@ __author__ = 'thornag'
 
 from PyQt4 import QtGui, QtCore
 
-from model.helper import container as di, ComponentRequest
-
-
 class FileMenu(object):
 
-    mapController = ComponentRequest('controllerMap')
+    mapController = None#ComponentRequest('controllerMap')
 
     def __init__(self):
         pass
@@ -38,18 +35,24 @@ class FileMenu(object):
 
 class Toolbar():
 
-    mapViewportController = ComponentRequest('controllerMapViewport')
+    mapViewportController = None#ComponentRequest('controllerMapViewport')
+
+    __config=None
+
+    def setConfig(self, config):
+        self.__config = config
+
+    def setViewportController(self, controller):
+        self.mapViewportController = controller
 
     def wireToolbarActions(self, mainWindow, toolbar):
 
-        config = ComponentRequest('Config').instance
-
         QActionGroup = QtGui.QActionGroup(toolbar)
 
-        actionPointer = QtGui.QAction(QtGui.QIcon(config.assets().toolbar().getPointerIcon()), u"Select", toolbar)
-        actionCreateRoom = QtGui.QAction(QtGui.QIcon(config.assets().toolbar().getRoomIcon()), u"Create room", toolbar)
-        actionCreateLabel = QtGui.QAction(QtGui.QIcon(config.assets().toolbar().getLabelIcon()), u"Create label", toolbar)
-        actionCreateBackground = QtGui.QAction(QtGui.QIcon(config.assets().toolbar().getFillIcon()), u"Create background", toolbar)
+        actionPointer = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getPointerIcon()), u"Select", toolbar)
+        actionCreateRoom = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getRoomIcon()), u"Create room", toolbar)
+        actionCreateLabel = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getLabelIcon()), u"Create label", toolbar)
+        actionCreateBackground = QtGui.QAction(QtGui.QIcon(self.__config.assets().toolbar().getFillIcon()), u"Create background", toolbar)
 
         for action in [actionPointer, actionCreateRoom, actionCreateLabel, actionCreateBackground]:
             action.setCheckable(True)

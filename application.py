@@ -1,57 +1,46 @@
 import sys
 
-from model.helper import container as DIContainer
 from model.config import RuntimeConfig
 from model.helper import Geometry as GeometryHelper
-
-#need to register RuntimeConfig dependency first to avoid race conditions
-DIContainer.register('Config', RuntimeConfig(sys.argv))
-
-from model.helper import ComponentRequest as DIRequest
-
-from controller import mainWindow as mainWindowController, mapViewport as mapViewportController, map as mapController
 from PyQt4 import QtGui
 import model.map
 import view.application as view
+import view.map as viewMap
 import sys
-
+from model.dic import Container
 
 class Application:
 
     __QApplication=None
     __uiMainWindow=None
-    __config=DIRequest('Config')
     __mapRegistry=None
     __uiToolbar=None
-    __controllers=None
-
-    def __init__(self):
-        self.__controllers=[]
+    __dic=None
 
     def bootstrap(self):
 
+        config = RuntimeConfig(sys.argv)
+
+        self.__dic = container = Container(config)
+
         #will initialize all controllers here
 
-        fileMenuController = mainWindowController.FileMenu()
-        toolbarController = mainWindowController.Toolbar()
+        fileMenuController = container.getMainWindowFileMenuController()
+        toolbarController = container.getMainWindowToolbarController()
 
-        mapViewportControllerInstance = mapViewportController.Map()
-        mapControllerInstance = mapController.Map()
-
-        self.__controllers.append(fileMenuController)
-        self.__controllers.append(mapViewportControllerInstance)
-        self.__controllers.append(mapControllerInstance)
-        self.__controllers.append(toolbarController)
+        mapViewportControllerInstance = container.getMapViewportController()
+        mapControllerInstance = container.getMapController()
 
         #will setup UI bits
+        view.config = config
         self.__QApplication = application = QtGui.QApplication([])
         QSplashScreen = view.SplashScreen.getSplashScreen()
         application.processEvents()
 
         QSplashScreen.showMessage("Initializing application")
-        self.__uiMainWindow = uiMainWindow = view.MainWindow()
-        self.__uiMainWindow.resize(self.__config.getint('view', 'width'), self.__config.getint('view', 'height'))
-        self.__uiMainWindow.setWindowTitle(self.__config.get('meta', 'windowTitle'))
+        self.__uiMainWindow = uiMainWindow = view.createMainWindow()
+        self.__uiMainWindow.resize(config.getint('view', 'width'), config.getint('view', 'height'))
+        self.__uiMainWindow.setWindowTitle(config.get('meta', 'windowTitle'))
 
         view.SystemTray.getSystemTrayMenu(uiMainWindow)
 
@@ -72,11 +61,7 @@ class Application:
         fileMenuController.wireMenu(uiMainWindow)
         toolbarController.wireToolbarActions(uiMainWindow, uiToolbar)
 
-        geometryHelper = GeometryHelper(self.__config.drawing())
-
-        DIContainer.register('controllerMap', mapControllerInstance)
-        DIContainer.register('controllerMapViewport', mapViewportControllerInstance)
-        DIContainer.register('geometryHelper', geometryHelper)
+        geometryHelper = GeometryHelper(config.drawing())
 
 
     def QApplication(self):
@@ -99,9 +84,11 @@ class Application:
         sys.exit(self.QApplication().exec_())
 
     def loadMap(self):
-        mapControllerInstance = DIRequest('controllerMap').instance.createMap()
+        mapControllerInstance = self.__dic.getMapController().createMap()
 
     def exit(self, code=0):
         self.QApplication().exit(code)
 
+    def container(self):
+        return self.__dic
 

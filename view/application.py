@@ -1,10 +1,9 @@
 __author__ = 'thornag'
 
 from PyQt4 import QtGui, uic, QtCore
-from model.helper import ComponentRequest
 from view.map import Viewport
 
-config = ComponentRequest('Config').instance
+config = None
 
 class Toolbar:
     @staticmethod
@@ -26,6 +25,7 @@ class SplashScreen:
         """
         :rtype: QtGui.QSplashScreen
         """
+        print config
         QPixmap = QtGui.QPixmap(config.assets().getSplashScreen())
         QSplashScreen = QtGui.QSplashScreen(QPixmap)
         QSplashScreen.show()
@@ -42,19 +42,22 @@ class SystemTray:
 
         return trayIcon
 
-mainWindowBlueprint, mainWindowBase = uic.loadUiType(config.assets().getMainWindowUI())
+def createMainWindow():
+    mainWindowBlueprint, mainWindowBase = uic.loadUiType(config.assets().getMainWindowUI())
 
-class MainWindow(mainWindowBlueprint, mainWindowBase):
+    class MainWindow(mainWindowBlueprint, mainWindowBase):
 
-    mapViewport=None
+        mapViewport=None
 
-    def __init__(self, parent=None):
-        super(mainWindowBase, self).__init__(parent)
-        self.setupUi(self)
-        self.mapViewport = Viewport()
-        self.setCentralWidget(self.mapViewport)
-        self.mapViewport.scale(0.3,0.3)
-        self.mapViewport.show()
+        def __init__(self, parent=None):
+            super(mainWindowBase, self).__init__(parent)
+            self.setupUi(self)
+            self.mapViewport = Viewport()
+            self.setCentralWidget(self.mapViewport)
+            self.mapViewport.scale(0.3,0.3)
+            self.mapViewport.show()
 
-    def getMapViewport(self):
-        return self.mapViewport
+        def getMapViewport(self):
+            return self.mapViewport
+
+    return MainWindow()

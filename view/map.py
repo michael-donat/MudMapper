@@ -1,7 +1,6 @@
 __author__ = 'donatm'
 
 from PyQt4 import QtGui, QtCore
-from model.helper import ComponentRequest
 from model.room import Directions
 import math
 
@@ -42,20 +41,17 @@ class Level(QtGui.QGraphicsScene):
     def controller(self):
         return self.__controller
 
-
-config = ComponentRequest('Config').instance.drawing()
-coordinatesHelper = ComponentRequest('geometryHelper')
-
 class RoomComponents(object):
 
     __boundingRect = None
     __roomRect = None
     __exits = None
     __arrowHeads={}
+    __config=None
 
     def __calculateArrowHead(self, line):
 
-        d = config.getExitSize()/1.25
+        d = self.__config.getExitSize()/1.25
         theta = math.pi / 7
 
         lineAngle = math.atan2(line.dy(), line.dx())
@@ -73,7 +69,8 @@ class RoomComponents(object):
         return QtGui.QPolygon([line.p2(), P1, P2])
 
 
-    def __init__(self):
+    def __init__(self, config):
+        self.__config = config
         self.__boundingRect = config.getBoundingRect()
         self.__roomRect = QtCore.QRect(config.getExitSize(), config.getExitSize(), config.getRoomSize(), config.getRoomSize())
         self.__exits = {
@@ -95,21 +92,27 @@ class RoomComponents(object):
     def exits(self): return self.__exits
     def arrowHeads(self): return self.__arrowHeads
 
-roomComponents = RoomComponents()
-
 class Room(QtGui.QGraphicsItem):
 
     DATA_ID = 0
+
+    __geometryHelper=None
+    __roomComponents = None
+
+    def setGeometryHelper(self, helper):
+        self.__geometryHelper = helper
+
+    def setRoomComponents(self, components):
+        self.__roomComponents = components
 
     def __init__(self):
         super(Room, self).__init__()
         self.setFlags(QtGui.QGraphicsItem.ItemSendsGeometryChanges | QtGui.QGraphicsItem.ItemIsSelectable | QtGui.QGraphicsItem.ItemIsMovable | QtGui.QGraphicsItem.ItemIsFocusable)
 
     def boundingRect(self):
-        return roomComponents.boundingRect()
+        return self.__roomComponents.boundingRect()
 
     def configure(self, roomModel):
-        print QtCore.QVariant(roomModel.id())
         self.setData(self.DATA_ID, QtCore.QVariant(roomModel.id()))
         self.setPos(roomModel.geometry().getPoint())
 
@@ -118,7 +121,7 @@ class Room(QtGui.QGraphicsItem):
 
     def paint(self, painter, option, widget):
 
-
+        roomComponents = self.__roomComponents
 
         painter.drawRect(roomComponents.roomRect())
         painter.drawLine(roomComponents.exits()[Directions.N])
@@ -143,7 +146,7 @@ class Room(QtGui.QGraphicsItem):
         if QGraphicsItem_GraphicsItemChange == QtGui.QGraphicsItem.ItemPositionChange:
             point = QVariant.toPoint()
 
-            QPointPosition = coordinatesHelper.instance.snapToGrid(QVariant.toPoint())
+            QPointPosition = self.__geometryHelper.snapToGrid(QVariant.toPoint())
 
             self.notifyPositionChanged()
 

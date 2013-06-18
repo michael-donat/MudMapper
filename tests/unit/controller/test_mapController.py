@@ -10,6 +10,8 @@ from controller.map import Map as mapController
 
 from tests.signals import ConnectionBox
 
+from mock import MagicMock
+
 @pytest.fixture
 def signalSniffer():
     """
@@ -17,11 +19,31 @@ def signalSniffer():
     """
     return ConnectionBox()
 
+@pytest.fixture
+def mapControllerObject():
+    controller = mapController()
+
+    factory = mapModel.Factory()
+
+    config = MagicMock()
+    config.getBoxSize.return_value=10
+
+    factory.setConfig(config)
+
+    controller.setFactory(factory)
+
+    geometryHelper = MagicMock()
+    geometryHelper.snapToGrid.return_value=QtCore.QPoint(0, 0)
+
+    controller.setGeometryHelper(geometryHelper)
+
+    return controller
+
 class TestControllerMap:
 
-    def test_createNewMapIsEmitting(self, signalSniffer):
+    def test_createNewMapIsEmitting(self, signalSniffer, mapControllerObject):
 
-        controller = mapController()
+        controller = mapControllerObject
 
         controller.mapModelCreated.connect(signalSniffer.slotSlot)
 
@@ -30,9 +52,9 @@ class TestControllerMap:
         signalSniffer.assertSignalArrived()
         signalSniffer.assertArgumentTypes(mapModel.Map)
 
-    def test_createNewMapIsDestroyingCurrentMap(self, signalSniffer):
+    def test_createNewMapIsDestroyingCurrentMap(self, signalSniffer, mapControllerObject):
 
-        controller = mapController()
+        controller = mapControllerObject
 
         controller.createMap()
 
@@ -43,9 +65,9 @@ class TestControllerMap:
         signalSniffer.assertSignalArrived()
         signalSniffer.assertArgumentTypes(mapModel.Map)
 
-    def test_createRoomRegistersRooms(self):
+    def test_createRoomRegistersRooms(self, mapControllerObject):
 
-        controller = mapController()
+        controller = mapControllerObject
         controller.createMap()
 
         newRoom = controller.createRoomAt(QtCore.QPoint(0,0))

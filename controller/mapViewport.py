@@ -2,7 +2,6 @@ __author__ = 'thornag'
 
 from PyQt4 import QtCore, QtGui
 from model import map as mapModel
-from model.helper import container as di
 from model.tools import enum
 from view.map import Room as roomView
 from view.map import Level as levelView
@@ -12,8 +11,8 @@ class Map(QtCore.QObject):
     __uiMapViewport=None
     __uiScenes=None
     __clickMode=None
-
     __mapModel=None
+    __mapRoomViewRoutine=None
 
     roomCreateRequest=QtCore.pyqtSignal(QtCore.QPointF)
 
@@ -22,6 +21,9 @@ class Map(QtCore.QObject):
     def __init__(self):
         super(Map, self).__init__()
         self.__uiScenes={}
+
+    def setRoomViewRoutine(self, routine):
+        self.__mapRoomViewRoutine = routine
 
     def clickMode(self, mode):
         self.__uiMapViewport.setCursor(QtCore.Qt.CrossCursor)
@@ -46,7 +48,7 @@ class Map(QtCore.QObject):
         self.__uiMapViewport.setScene(scene)
 
     def createRoom(self, room):
-        newRoom = roomView()
+        newRoom = self.__mapRoomViewRoutine()
         newRoom.configure(room)
         self.__uiMapViewport.scene().addItem(newRoom)
 
@@ -75,6 +77,8 @@ class Map(QtCore.QObject):
             self.roomCreateRequest.emit(eventPosition)
 
     def itemPositionChanged(self, modelId, position, roomView):
+        o = self.map().roomById(modelId).geometry()
         self.map().roomById(modelId).geometry().updateFromView(roomView)
+        a = self.map().roomById(modelId).geometry()
         room = self.map().roomById(modelId)
         pass

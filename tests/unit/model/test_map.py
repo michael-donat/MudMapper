@@ -44,7 +44,9 @@ class TestClassFactory:
 
     def test_createNewMap(self):
 
-        map = mapModel.Factory.createNewMap()
+        factory = mapModel.Factory()
+
+        map = factory.createNewMap()
 
         assert isinstance(map, mapModel.Map)
 

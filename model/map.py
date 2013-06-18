@@ -1,6 +1,4 @@
 from PyQt4 import QtCore
-from uuid import uuid1
-from model.helper import ComponentRequest
 from model.helper import generateId
 from model.room import Room
 
@@ -99,12 +97,14 @@ class Level(object):
     def zone(self):
         return self.__zone
 
-config = ComponentRequest('Config').instance.drawing()
-
 class Factory(object):
 
-    @staticmethod
-    def createNewMap():
+    config = None
+
+    def setConfig(self, configuration):
+        self.config = configuration
+
+    def createNewMap(self):
         newMap = Map()
         mapZone = Zone()
         newMap.addZone(mapZone)
@@ -113,8 +113,7 @@ class Factory(object):
         newMap.addLevel(mapLevel)
         return newMap
 
-    @staticmethod
-    def createNewRoom():
+    def createNewRoom(self):
         newRoom = Room()
-        newRoom.geometry().update(0,0,config.getBoxSize(),config.getBoxSize())
+        newRoom.geometry().update(0,0,self.config.getBoxSize(),self.config.getBoxSize())
         return newRoom

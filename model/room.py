@@ -207,8 +207,8 @@ class Geometry(object):
     def updateFromView(self, QGraphicsItem):
         x1 = QGraphicsItem.x()
         y1 = QGraphicsItem.y()
-        x2 = x1 + QGraphicsItem.rect().width()
-        y2 = y1 + QGraphicsItem.rect().height()
+        x2 = x1 + QGraphicsItem.boundingRect().width()
+        y2 = y1 + QGraphicsItem.boundingRect().height()
 
         return self.update(x1, y1, x2, y2)
 
