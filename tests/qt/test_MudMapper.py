@@ -27,9 +27,3 @@ class TestApplication:
         assert MM.mainWindow().getMapViewport().scene() is not None
 
         MM.exit()
-
-
-
-
-
-

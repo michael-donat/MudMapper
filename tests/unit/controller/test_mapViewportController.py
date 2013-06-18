@@ -8,15 +8,14 @@ from mock import MagicMock
 
 import model.map as mapModel
 
-@pytest.fixture(scope="module")
-def app():
-    return QtGui.QApplication(sys.argv)
 
 from controller.mapViewport import Map as mapController
 
 class TestControllerMap:
 
-    def test_createMap(self, app):
+    def test_createMap(self):
+
+        app = QtGui.QApplication(sys.argv)
 
         mockViewport = MagicMock()
         mockMapModel = MagicMock()
@@ -33,7 +32,11 @@ class TestControllerMap:
 
         assert len(controller.scenes()) == 2
 
-    def test_destroyMap(self, app):
+        app.exit()
+
+    def test_destroyMap(self):
+
+        app = QtGui.QApplication(sys.argv)
 
         mockViewport = MagicMock()
         mockMapModel = MagicMock()
@@ -46,6 +49,8 @@ class TestControllerMap:
         controller.destroyMap(mockMapModel)
 
         assert len(controller.scenes()) is 0
+
+        app.exit()
 
 
 

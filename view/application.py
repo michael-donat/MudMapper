@@ -25,7 +25,6 @@ class SplashScreen:
         """
         :rtype: QtGui.QSplashScreen
         """
-        print config
         QPixmap = QtGui.QPixmap(config.assets().getSplashScreen())
         QSplashScreen = QtGui.QSplashScreen(QPixmap)
         QSplashScreen.show()
