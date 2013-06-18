@@ -32,6 +32,8 @@ class Application:
         mapViewportControllerInstance = container.getMapViewportController()
         mapControllerInstance = container.getMapController()
 
+        propertiesController = container.getPropertiesController()
+
         #will setup UI bits
         view.config = config
         self.__QApplication = application = QtGui.QApplication([])
@@ -54,6 +56,8 @@ class Application:
         #wire it all together
 
         mapViewportControllerInstance.setView(uiMainWindow.getMapViewport())
+        propertiesController.setWindow(uiPropertiesWindow)
+
 
         mapControllerInstance.mapModelCreated.connect(mapViewportControllerInstance.createMap)
         mapControllerInstance.mapModelDestroyed.connect(mapViewportControllerInstance.destroyMap)
@@ -65,7 +69,6 @@ class Application:
         fileMenuController.wireMenu(uiMainWindow)
         toolbarController.wireToolbarActions(uiMainWindow, uiToolbar)
 
-        geometryHelper = GeometryHelper(config.drawing())
 
 
     def QApplication(self):
@@ -86,7 +89,6 @@ class Application:
         self.mainWindow().raise_()
         self.toolbar().show()
         self.toolbar().raise_()
-        self.propertiesWindow().show()
         self.propertiesWindow().raise_()
 
     def run(self):

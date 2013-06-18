@@ -66,9 +66,17 @@ def createPropertiesWindow():
 
     class PropertiesWindow(propertiesWindowBlueprint, propertiesWindowBase):
 
+        __controller=None
+
         def __init__(self, parent=None):
             super(propertiesWindowBase, self).__init__(parent)
             self.setupUi(self)
             self.move(900,350)
+
+        def setController(self, controller):
+            self.__controller = controller
+
+        def controller(self):
+            return self.__controller
 
     return PropertiesWindow()
