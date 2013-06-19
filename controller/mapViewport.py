@@ -1,3 +1,5 @@
+import PyQt4
+
 __author__ = 'thornag'
 
 from PyQt4 import QtCore, QtGui
@@ -52,6 +54,10 @@ class Map(QtCore.QObject):
         newRoom.configure(room)
         self.__uiMapViewport.scene().addItem(newRoom)
 
+    @QtCore.pyqtSlot(str)
+    def removeRoom(self, roomView):
+        roomView.scene().removeItem(roomView)
+
     def scenes(self):
         return self.__uiScenes
 
@@ -77,8 +83,33 @@ class Map(QtCore.QObject):
             self.roomCreateRequest.emit(eventPosition)
 
     def itemPositionChanged(self, modelId, position, roomView):
-        o = self.map().roomById(modelId).geometry()
         self.map().roomById(modelId).geometry().updateFromView(roomView)
-        a = self.map().roomById(modelId).geometry()
-        room = self.map().roomById(modelId)
-        pass
+
+
+class RoomContextMenu(QtCore.QObject):
+
+    roomRemoveRequest = QtCore.pyqtSignal([str], [object])
+
+    def __init__(self):
+        super(RoomContextMenu, self).__init__()
+
+    def delete(self, roomView):
+        self.roomRemoveRequest[str].emit(roomView.modelId())
+        self.roomRemoveRequest[object].emit(roomView)
+
+    def properties(self, roomView):
+        print 'properties request'
+
+    def markActive(self, roomView):
+        print 'mark request'
+
+class Room(QtCore.QObject):
+
+    __contextMenu=None
+
+    def __init__(self):
+        super(Room, self).__init__()
+        self.__contextMenu = RoomContextMenu()
+
+    def contextMenu(self):
+        return self.__contextMenu

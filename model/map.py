@@ -47,6 +47,9 @@ class Map(object):
 
         self.__rooms[mapRoom.id()] = mapRoom
 
+    def removeRoom(self, mapRoom):
+        del self.__rooms[mapRoom.id()]
+
 
     def roomById(self, id):
         if not self.__rooms.has_key(id):

@@ -98,6 +98,10 @@ class Room(QtGui.QGraphicsItem):
 
     __geometryHelper=None
     __roomComponents = None
+    __controller=None
+
+    def setController(self, controller):
+        self.__controller = controller
 
     def setGeometryHelper(self, helper):
         self.__geometryHelper = helper
@@ -166,12 +170,15 @@ class Room(QtGui.QGraphicsItem):
 
         menu = QtGui.QMenu()
         action = QtGui.QAction('Mark as active', self.scene())
+        action.triggered.connect(lambda: self.__controller.contextMenu().markActive(self))
         menu.addAction(action)
 
         action = QtGui.QAction('Delete', self.scene())
+        action.triggered.connect(lambda: self.__controller.contextMenu().delete(self))
         menu.addAction(action)
 
         action = QtGui.QAction('Properties', self.scene())
+        action.triggered.connect(lambda: self.__controller.contextMenu().properties(self))
         menu.addAction(action)
 
         menu.exec_(QGraphicsSceneContextMenuEvent.screenPos())

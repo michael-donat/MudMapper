@@ -73,6 +73,11 @@ class Map(QtCore.QObject):
 
         return newRoom
 
+    @QtCore.pyqtSlot(str)
+    def removeRoomById(self, roomId):
+        self.__map.removeRoom(self.__map.roomById(str(roomId)))
+
+
 
 
 

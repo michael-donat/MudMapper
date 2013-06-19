@@ -2,6 +2,11 @@ __author__ = 'thornag'
 
 from PyQt4 import QtGui, QtCore
 
+class Keyboard(object):
+
+    def processKeyPressEvent(self):
+        pass
+
 class FileMenu(object):
 
     mapController = None#ComponentRequest('controllerMap')
@@ -35,7 +40,7 @@ class FileMenu(object):
 
 class Toolbar():
 
-    mapViewportController = None#ComponentRequest('controllerMapViewport')
+    mapViewportController = None
 
     __config=None
     __actions=None
@@ -81,6 +86,13 @@ class Toolbar():
 
         actionCreateBackground.setShortcut('CTRL+4')
         actionCreateBackground.setToolTip('Key: CTRL+4')
+
+    @QtCore.pyqtSlot(bool)
+    def resetPointer(self):
+        #Will reset only if there is no keyboard modifier
+        if QtGui.QApplication.queryKeyboardModifiers() & QtCore.Qt.ControlModifier:
+            return
+        self.actionPointer(True)
 
     @QtCore.pyqtSlot(bool)
     def actionPointer(self, state):

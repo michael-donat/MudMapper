@@ -31,6 +31,7 @@ class Application:
 
         mapViewportControllerInstance = container.getMapViewportController()
         mapControllerInstance = container.getMapController()
+        mapRoomControllerInstance = container.getRoomController()
 
         propertiesController = container.getPropertiesController()
 
@@ -63,11 +64,16 @@ class Application:
         mapControllerInstance.mapModelDestroyed.connect(mapViewportControllerInstance.destroyMap)
         mapControllerInstance.mapLevelSelected.connect(mapViewportControllerInstance.selectLevel)
         mapControllerInstance.mapRoomCreated.connect(mapViewportControllerInstance.createRoom)
-        mapControllerInstance.mapRoomCreated.connect(toolbarController.actionPointer)
         mapViewportControllerInstance.roomCreateRequest.connect(mapControllerInstance.createRoomAt)
 
+        mapRoomControllerInstance.contextMenu().roomRemoveRequest[object].connect(mapViewportControllerInstance.removeRoom)
+        mapRoomControllerInstance.contextMenu().roomRemoveRequest[str].connect(mapControllerInstance.removeRoomById)
+
         fileMenuController.wireMenu(uiMainWindow)
+        fileMenuController.setMapController(mapControllerInstance)
+
         toolbarController.wireToolbarActions(uiMainWindow, uiToolbar)
+        mapControllerInstance.mapRoomCreated.connect(toolbarController.resetPointer)
 
 
 

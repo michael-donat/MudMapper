@@ -1,5 +1,10 @@
 
-from controller import mainWindow as mainWindowController, mapViewport as mapViewportController, map as mapController, propertiesWindow as propertiesController
+from controller import \
+    mainWindow as mainWindowController, \
+    mapViewport as mapViewportController, \
+    map as mapController, \
+    propertiesWindow as propertiesController \
+
 import model.map as mapModel
 import model.helper as helperModel
 import view.map as viewMap
@@ -53,6 +58,7 @@ class Container:
         newRoom = viewMap.Room()
         newRoom.setGeometryHelper(self.getHelperGeometry())
         newRoom.setRoomComponents(self.getViewRoomComponents())
+        newRoom.setController(self.getRoomController())
 
         return newRoom
 
@@ -73,3 +79,9 @@ class Container:
             self.__objects['controller.window.properties'] = propertiesController.Properties()
 
         return self.__objects['controller.window.properties']
+
+    def getRoomController(self):
+        if not self.__objects.has_key('controller.map.room'):
+            self.__objects['controller.map.room'] = mapViewportController.Room()
+
+        return self.__objects['controller.map.room']
